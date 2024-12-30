@@ -18,12 +18,13 @@ export default function Dashboard() {
 
   return (
     <>
-      <DashboardNavbar setIsSidebarOpen={setIsSidebarOpen} />
-      <div className="flex h-screen bg-gray-900 text-gray-100">
-        <Sidebar isSidebarOpen={isSidebarOpen} />
+    <DashboardNavbar setIsSidebarOpen={setIsSidebarOpen} />
+    <div className="flex h-screen bg-gray-900 text-gray-100">
+      <Sidebar isSidebarOpen={isSidebarOpen} />
+      <div className="flex-1 p-4">
         <Outlet />
-        
       </div>
-    </>
+    </div>
+  </>
   );
 }

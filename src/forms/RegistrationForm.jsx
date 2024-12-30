@@ -1,12 +1,11 @@
 /* eslint-disable react/prop-types */
-import axios from "axios";
 import { useContext, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
-import Field from "../components/Field";
-import FieldSet from "../components/FieldSet";
+import axios from "axios";
 import { AuthContext } from "../contexts";
-import "./form.css";
+import FieldSet from "../components/FieldSet";
+import Field from "../components/Field";
 
 const RegistrationForm = ({ onToggle }) => {
   const { signUp, updateUsername } = useContext(AuthContext);
@@ -20,27 +19,22 @@ const RegistrationForm = ({ onToggle }) => {
 
   const onSubmit = async (data) => {
     try {
-      // Sign up user with Firebase
       const userCredential = await signUp(data.email, data.password);
       const user = userCredential.user;
 
-      // Update Firebase profile with username
       await updateUsername(user, data.username);
 
-      // Add user entry to MongoDB
       const res = await axios.post(`${import.meta.env.VITE_BASE_URL}/users`, {
         username: data.username,
         email: data.email,
       });
-      console.log(res);
 
       if (res.status !== 201) {
         setErrorMessage("Failed to register user in the database.");
         return;
       }
 
-      // Successful registration
-      navigate("/"); // Toggle to login or dashboard
+      navigate("/");
     } catch (err) {
       console.error("Error during registration:", err);
       if (err.response?.data?.message) {
@@ -52,10 +46,10 @@ const RegistrationForm = ({ onToggle }) => {
   };
 
   return (
-    <div className="login-box bg-gradient-to-r from-[#242D39] via-[#10253C] to-[#000000] text-white rounded-lg shadow-lg p-10 w-96 mx-auto">
-      <p className="text-center font-bold text-xl mb-8 bg-gradient-to-br from-gray-300 via-[#235081] to-[#3d5472] bg-clip-text text-transparent">
+    <div className="bg-blue-800 text-gray-300 rounded-lg shadow-lg p-10 w-96 mx-auto">
+      <h2 className="text-center font-bold text-2xl mb-8 text-gray-400">
         REGISTER
-      </p>
+      </h2>
       <form onSubmit={handleSubmit(onSubmit)}>
         <FieldSet>
           <Field label="Username" error={errors.username}>
@@ -68,20 +62,20 @@ const RegistrationForm = ({ onToggle }) => {
                 },
               })}
               type="text"
-              placeholder="U S E R N A M E"
-              className={`user-box w-full text-white bg-transparent border-b ${
-                errors.username ? "border-red-500" : "border-white"
-              } py-2 px-2 mb-6 outline-none focus:border-blue-900`}
+              placeholder="Enter your username"
+              className={`w-full text-gray-300 bg-blue-900 border-b ${
+                errors.username ? "border-red-500" : "border-gray-600"
+              } py-2 px-3 mb-6 outline-none focus:border-yellow-400 transition-colors`}
             />
           </Field>
           <Field label="Email" error={errors.email}>
             <input
               {...register("email", { required: "Email is required" })}
               type="email"
-              placeholder="E M A I L"
-              className={`user-box w-full text-white bg-transparent border-b ${
-                errors.email ? "border-red-500" : "border-white"
-              } py-2 px-2 mb-6 outline-none focus:border-blue-900`}
+              placeholder="Enter your email"
+              className={`w-full text-gray-300 bg-blue-900 border-b ${
+                errors.email ? "border-red-500" : "border-gray-600"
+              } py-2 px-3 mb-6 outline-none focus:border-yellow-400 transition-colors`}
             />
           </Field>
           <Field label="Password" error={errors.password}>
@@ -94,25 +88,25 @@ const RegistrationForm = ({ onToggle }) => {
                 },
               })}
               type="password"
-              placeholder="P A S S W O R D"
-              className={`user-box w-full text-white bg-transparent border-b ${
-                errors.password ? "border-red-500" : "border-white"
-              } py-2 px-2 mb-6 outline-none focus:border-blue-900`}
+              placeholder="Enter your password"
+              className={`w-full text-gray-300 bg-blue-900 border-b ${
+                errors.password ? "border-red-500" : "border-gray-600"
+              } py-2 px-3 mb-6 outline-none focus:border-yellow-400 transition-colors`}
             />
           </Field>
-          {errorMessage && <p className="text-red-500">{errorMessage}</p>}
-          <button className="animated-button mt-8">
-            REGISTER
-            <span></span>
-            <span></span>
-            <span></span>
-            <span></span>
+          {errorMessage && <p className="text-red-500 mb-4">{errorMessage}</p>}
+          <button className="w-full bg-gray-500 hover:bg-gray-600 text-gray-100 font-bold py-2 px-4 rounded transition-colors duration-300 mt-8">
+            SIGN UP
           </button>
         </FieldSet>
       </form>
       <p className="text-sm text-gray-400 mt-6">
         Already have an account?{" "}
-        <a href="#" className="hover:text-gray-300" onClick={onToggle}>
+        <a
+          href="#"
+          className="text-yellow-400 hover:text-gray-300"
+          onClick={onToggle}
+        >
           Sign in!
         </a>
       </p>

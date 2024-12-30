@@ -1,11 +1,11 @@
-/* eslint-disable react/prop-types */
+import React, { useContext } from "react";
 import { useForm } from "react-hook-form";
-import Field from "../components/Field";
-import FieldSet from "../components/FieldSet";
-import "./form.css"; // For custom animation and layout styles
-import { useContext } from "react";
-import { AuthContext } from "../contexts";
 import { useNavigate } from "react-router-dom";
+import { AuthContext } from "../contexts";
+import FieldSet from "../components/FieldSet";
+import Field from "../components/Field";
+
+
 const LoginForm = ({ onToggle }) => {
   const { login } = useContext(AuthContext);
   const {
@@ -16,18 +16,7 @@ const LoginForm = ({ onToggle }) => {
   const navigate = useNavigate();
 
   const onSubmit = async (data) => {
-    // const user = {
-    //   email: "abc@gmail.com",
-    //   password: "123456789",
-    // };
-    // const found = data.email === user.email && data.password === user.password;
-    // if (!found) {
-    //   setError("root.random", {
-    //     message: "User not found",
-    //     type: "random",
-    //   });
-    // }
-    console.log(data)
+    console.log(data);
     const user = await login(data.email, data.password);
     console.log("🚀 ~ onSubmit ~ user:", user);
     if (user) {
@@ -36,10 +25,10 @@ const LoginForm = ({ onToggle }) => {
   };
 
   return (
-    <div className="login-box bg-gradient-to-r from-[#242D39] via-[#10253C] to-[#000000] text-white rounded-lg shadow-lg p-10 w-96 mx-auto">
-      <p className="text-center font-bold text-xl mb-8 bg-gradient-to-br from-gray-300 via-[#235081] to-[#3d5472] bg-clip-text text-transparent">
+    <div className="bg-blue-800 text-gray-300 rounded-lg shadow-lg p-10 w-96 mx-auto">
+      <h2 className="text-center font-bold text-2xl mb-8 text-grey-400">
         LOGIN
-      </p>
+      </h2>
       <form onSubmit={handleSubmit(onSubmit)}>
         <FieldSet>
           <Field label="Email" error={errors.email}>
@@ -48,10 +37,10 @@ const LoginForm = ({ onToggle }) => {
               type="email"
               name="email"
               id="email"
-              placeholder="E M A I L"
-              className={`user-box w-full text-white bg-transparent border-b ${
-                errors.email ? "border-red-500" : "border-white"
-              } py-2 px-2 mb-6 outline-none focus:border-blue-900`}
+              placeholder="Enter your email"
+              className={`w-full text-gray-300 bg-blue-900 border-b ${
+                errors.email ? "border-red-500" : "border-gray-600"
+              } py-2 px-3 mb-6 outline-none focus:border-yellow-400 transition-colors`}
               required
             />
           </Field>
@@ -67,25 +56,25 @@ const LoginForm = ({ onToggle }) => {
               type="password"
               name="password"
               id="password"
-              placeholder="P A S S W O R D"
-              className={`user-box w-full text-white bg-transparent border-b ${
-                errors.password ? "border-red-500" : "border-white"
-              } py-2 px-2 mb-6 outline-none focus:border-blue-900`}
+              placeholder="Enter your password"
+              className={`w-full text-gray-300 bg-blue-900 border-b ${
+                errors.password ? "border-red-500" : "border-gray-600"
+              } py-2 px-3 mb-6 outline-none focus:border-yellow-400 transition-colors`}
               required
             />
           </Field>
-          <button className="animated-button mt-8">
+          <button className="w-full bg-gray-500 hover:bg-gray-600 text-gray-100 font-bold py-2 px-4 rounded transition-colors duration-300 mt-8">
             LOGIN
-            <span></span>
-            <span></span>
-            <span></span>
-            <span></span>
           </button>
         </FieldSet>
       </form>
       <p className="text-sm text-gray-400 mt-6">
-        Don&apos;t have an account?{" "}
-        <a href="#" className="hover:text-gray-300" onClick={onToggle}>
+        Don't have an account?{" "}
+        <a
+          href="#"
+          className="text-yellow-400 hover:text-gray-300"
+          onClick={onToggle}
+        >
           Sign up!
         </a>
       </p>
@@ -95,3 +84,4 @@ const LoginForm = ({ onToggle }) => {
 };
 
 export default LoginForm;
+

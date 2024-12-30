@@ -16,25 +16,22 @@ import IconButton from "@mui/material/IconButton";
 const DashboardNavbar = ({ setIsSidebarOpen }) => {
   return (
     <nav className="bg-gray-800 shadow-lg p-4 flex flex-wrap justify-between items-center sticky top-0">
-      <IconButton
-        color="inherit"
-        aria-label="open drawer"
-        edge="start"
-        onClick={() => setIsSidebarOpen((prev) => !prev)}
-        className="pl-8"
-      >
-        <MenuIcon sx={{ color: "white", ml: 2 }} />{" "}
-      </IconButton>
-
-      <div>
-        <h1 className="text-white">LOGO</h1>
-      </div>
-
-      <div className="flex items-center space-x-4">
-        <GraduationCap className="h-6 w-6 text-teal-400" />
-        <div>
-          <h2 className="text-lg font-semibold text-white">className</h2>
-          <p className="text-sm text-gray-400">subject</p>
+      <div className="flex gap-4">
+        <IconButton
+          color="inherit"
+          aria-label="open drawer"
+          edge="start"
+          onClick={() => setIsSidebarOpen((prev) => !prev)}
+          className="pl-8"
+        >
+          <MenuIcon sx={{ color: "white", ml: 2 }} />{" "}
+        </IconButton>
+        <div className="flex items-center space-x-4">
+          <GraduationCap className="h-6 w-6 text-teal-400" />
+          <div>
+            <h2 className="text-lg font-semibold text-white">className</h2>
+            <p className="text-sm text-gray-400">subject</p>
+          </div>
         </div>
       </div>
 
