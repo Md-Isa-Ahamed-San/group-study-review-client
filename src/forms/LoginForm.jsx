@@ -3,17 +3,17 @@ import { useForm } from "react-hook-form";
 import Field from "../components/Field";
 import FieldSet from "../components/FieldSet";
 import "./form.css"; // For custom animation and layout styles
-import { useContext} from "react";
+import { useContext } from "react";
 import { AuthContext } from "../contexts";
 import { useNavigate } from "react-router-dom";
 const LoginForm = ({ onToggle }) => {
-  const {login} = useContext(AuthContext)
+  const { login } = useContext(AuthContext);
   const {
     register,
     handleSubmit,
     formState: { errors },
   } = useForm();
-  const navigate = useNavigate()
+  const navigate = useNavigate();
 
   const onSubmit = async (data) => {
     // const user = {
@@ -27,16 +27,19 @@ const LoginForm = ({ onToggle }) => {
     //     type: "random",
     //   });
     // }
-    const user = await login(data.email,data.password)
-    console.log("🚀 ~ onSubmit ~ user:", user)
-    if(user){
-     navigate("/home") 
+    console.log(data)
+    const user = await login(data.email, data.password);
+    console.log("🚀 ~ onSubmit ~ user:", user);
+    if (user) {
+      navigate("/");
     }
   };
 
   return (
     <div className="login-box bg-gradient-to-r from-[#242D39] via-[#10253C] to-[#000000] text-white rounded-lg shadow-lg p-10 w-96 mx-auto">
-   <p className="text-center font-bold text-xl mb-8 bg-gradient-to-br from-gray-300 via-[#235081] to-[#3d5472] bg-clip-text text-transparent">LOGIN</p>
+      <p className="text-center font-bold text-xl mb-8 bg-gradient-to-br from-gray-300 via-[#235081] to-[#3d5472] bg-clip-text text-transparent">
+        LOGIN
+      </p>
       <form onSubmit={handleSubmit(onSubmit)}>
         <FieldSet>
           <Field label="Email" error={errors.email}>

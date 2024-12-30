@@ -1,15 +1,20 @@
-import { useState,useEffect,useCallback } from "react";
+/* eslint-disable react/prop-types */
+import { useState, useEffect } from "react";
 import { AuthContext } from "../contexts";
-
 import auth from "../firebase/firebase";
-import { onAuthStateChanged, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, updateProfile } from "firebase/auth";
+import {
+  onAuthStateChanged,
+  createUserWithEmailAndPassword,
+  signInWithEmailAndPassword,
+  signOut,
+  updateProfile,
+} from "firebase/auth";
 
 const AuthProvider = ({ children }) => {
-  
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  // Listen for auth state changes
+  console.log("inside auth provider USER: ", user);
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
       setUser(currentUser);
@@ -17,52 +22,33 @@ const AuthProvider = ({ children }) => {
     });
 
     return () => unsubscribe();
-  }, []);
+  }, [user?.email]);
 
-  // Sign up function
-  const signUp = useCallback(async (email, password, username) => {
+  const signUp = async (email, password) => {
     setError(null);
-    try {
-      const userCredential = await createUserWithEmailAndPassword(
-        auth,
-        email,
-        password
-      );
+    return createUserWithEmailAndPassword(auth, email, password);
+  };
 
-      const userProfile = userCredential.user;
-      await updateProfile(userProfile, { displayName: username });
-      console.log("🚀 ~ signUp ~ user:", userProfile);
-      return userProfile;
-    } catch (err) {
-      setError(err.message);
+  const updateUsername = async (userProfile, username) => {
+    if (userProfile) {
+      return updateProfile(userProfile, { displayName: username });
     }
-  }, []);
+    throw new Error("User profile is undefined.");
+  };
 
-  // Log in function
-  const login = useCallback(async (email, password) => {
+  const login = async (email, password) => {
     setError(null);
-    try {
-      const user = await signInWithEmailAndPassword(auth, email, password);
-      console.log("🚀 ~ login ~ user:", user);
-      return user;
-    } catch (err) {
-      setError(err.message);
-    }
-  }, []);
+    return signInWithEmailAndPassword(auth, email, password);
+  };
 
-  // Log out function
-  const logout = useCallback(async () => {
+  const logout = async () => {
     setError(null);
-    try {
-      await signOut(auth);
-    } catch (err) {
-      setError(err.message);
-    }
-  }, []);
-  // const { user, loading, error, signUp, login, logout } = useAuth();
+    return signOut(auth);
+  };
+
   return (
     <AuthContext.Provider
-      value={{ user, loading, error, signUp, login, logout }}
+      value={{ user, loading, error, signUp, login, logout, updateUsername }}
     >
       {children}
     </AuthContext.Provider>
