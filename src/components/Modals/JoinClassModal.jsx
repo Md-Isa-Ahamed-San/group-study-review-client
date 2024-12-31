@@ -1,8 +1,21 @@
 import { AnimatePresence, motion } from "framer-motion";
 import { X } from "lucide-react";
+import React, { useState } from "react";
 
+const JoinClassModal = ({ setToggleJoinClassModal }) => {
+  const [classCode, setClassCode] = useState("");
 
-const ClassCreateModal = ({setToggleClassCreateModal}) => {
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    if (classCode.trim() === "") {
+      alert("Please enter a valid class code.");
+      return;
+    }
+    // Handle class code submission logic here
+    console.log("Class code submitted:", classCode);
+    // setToggleJoinClassModal(false);
+  };
+
   return (
     <AnimatePresence>
       <motion.div
@@ -20,10 +33,10 @@ const ClassCreateModal = ({setToggleClassCreateModal}) => {
           <div className="p-6">
             <div className="flex justify-between items-start mb-6">
               <h2 className="text-2xl font-bold text-blue-400">
-                Create a class
+                Join a Class
               </h2>
               <button
-                onClick={()=>setToggleClassCreateModal(false)}
+                onClick={() => setToggleJoinClassModal(false)}
                 className="text-gray-400 hover:text-blue-400 transition duration-300 p-1"
                 aria-label="Close modal"
               >
@@ -31,45 +44,28 @@ const ClassCreateModal = ({setToggleClassCreateModal}) => {
               </button>
             </div>
 
-            <form className="space-y-4">
+            <form onSubmit={handleSubmit} className="space-y-4">
               <div>
                 <label
-                  htmlFor="title"
+                  htmlFor="classCode"
                   className="block text-sm font-medium text-gray-300"
                 >
-                  Class Name
+                  Class Code
                 </label>
                 <input
                   type="text"
-                  id="title"
-                  //   value={title}
-                  //   onChange={(e) => setTitle(e.target.value)}
+                  id="classCode"
+                  value={classCode}
+                  onChange={(e) => setClassCode(e.target.value)}
                   className="mt-1 block w-full rounded-md bg-gray-800 border-gray-700 text-gray-300 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-500 focus:ring-opacity-50"
                   required
                 />
               </div>
-              <div>
-                <label
-                  htmlFor="title"
-                  className="block text-sm font-medium text-gray-300"
-                >
-                  Subject
-                </label>
-                <input
-                  type="text"
-                  id="title"
-                  //   value={title}
-                  //   onChange={(e) => setTitle(e.target.value)}
-                  className="mt-1 block w-full rounded-md bg-gray-800 border-gray-700 text-gray-300 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-500 focus:ring-opacity-50"
-                  required
-                />
-              </div>
-
 
               <div className="flex justify-end space-x-3">
                 <button
                   type="button"
-                  onClick={()=>setToggleClassCreateModal(false)}
+                  onClick={() => setToggleJoinClassModal(false)}
                   className="px-4 py-2 border border-gray-700 rounded-md text-gray-300 hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
                 >
                   Cancel
@@ -78,7 +74,7 @@ const ClassCreateModal = ({setToggleClassCreateModal}) => {
                   type="submit"
                   className="px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
                 >
-                  Create
+                  Join
                 </button>
               </div>
             </form>
@@ -89,4 +85,4 @@ const ClassCreateModal = ({setToggleClassCreateModal}) => {
   );
 };
 
-export default ClassCreateModal;
+export default JoinClassModal;
