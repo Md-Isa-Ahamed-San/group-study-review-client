@@ -1,24 +1,30 @@
 import React, { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { X, Calendar, FileText, Upload } from "lucide-react";
+import { useForm } from "react-hook-form";
 
-export default function AssignmentModal({ isOpen }) {
-  const [title, setTitle] = useState("");
-  const [description, setDescription] = useState("");
-  const [dueDate, setDueDate] = useState("");
+export default function AssignmentModal({ isOpen, onClose }) {
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+    setValue,
+  } = useForm();
+
   const [file, setFile] = useState(null);
-
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    // Here you would typically send the data to your backend
-    // onCreateAssignment({ title, description, dueDate, file })
-    // onClose()
-  };
 
   const handleFileChange = (e) => {
     if (e.target.files) {
       setFile(e.target.files[0]);
+      setValue("file", e.target.files[0]);
     }
+  };
+
+  const onSubmit = (data) => {
+    // Handle the form submission here (e.g., sending data to the server)
+    console.log("Form data submitted:", data);
+    // onCreateAssignment(data); // Uncomment to call onCreateAssignment if you need to send the data to the backend.
+    // onClose(); // Close the modal after submission
   };
 
   return (
@@ -37,11 +43,9 @@ export default function AssignmentModal({ isOpen }) {
         >
           <div className="p-6">
             <div className="flex justify-between items-start mb-6">
-              <h2 className="text-2xl font-bold text-blue-400">
-                Create Assignment
-              </h2>
+              <h2 className="text-2xl font-bold text-blue-400">Create Assignment</h2>
               <button
-                //   onClick={onClose}
+                onClick={onClose}
                 className="text-gray-400 hover:text-blue-400 transition duration-300 p-1"
                 aria-label="Close modal"
               >
@@ -49,7 +53,7 @@ export default function AssignmentModal({ isOpen }) {
               </button>
             </div>
 
-            <form onSubmit={handleSubmit} className="space-y-4">
+            <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
               <div>
                 <label
                   htmlFor="title"
@@ -60,11 +64,12 @@ export default function AssignmentModal({ isOpen }) {
                 <input
                   type="text"
                   id="title"
-                  value={title}
-                  onChange={(e) => setTitle(e.target.value)}
+                  {...register("title", { required: "Title is required" })}
                   className="mt-1 block w-full rounded-md bg-gray-800 border-gray-700 text-gray-300 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-500 focus:ring-opacity-50"
-                  required
                 />
+                {errors.title && (
+                  <p className="text-sm text-red-500">{errors.title.message}</p>
+                )}
               </div>
 
               <div>
@@ -76,12 +81,13 @@ export default function AssignmentModal({ isOpen }) {
                 </label>
                 <textarea
                   id="description"
-                  value={description}
-                  onChange={(e) => setDescription(e.target.value)}
+                  {...register("description", { required: "Description is required" })}
                   rows={3}
                   className="mt-1 block w-full rounded-md bg-gray-800 border-gray-700 text-gray-300 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-500 focus:ring-opacity-50"
-                  required
                 />
+                {errors.description && (
+                  <p className="text-sm text-red-500">{errors.description.message}</p>
+                )}
               </div>
 
               <div>
@@ -98,11 +104,12 @@ export default function AssignmentModal({ isOpen }) {
                   <input
                     type="date"
                     id="dueDate"
-                    value={dueDate}
-                    onChange={(e) => setDueDate(e.target.value)}
+                    {...register("dueDate", { required: "Due date is required" })}
                     className="block w-full pl-10 rounded-md bg-gray-800 border-gray-700 text-gray-300 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-500 focus:ring-opacity-50"
-                    required
                   />
+                  {errors.dueDate && (
+                    <p className="text-sm text-red-500">{errors.dueDate.message}</p>
+                  )}
                 </div>
               </div>
 
@@ -129,19 +136,23 @@ export default function AssignmentModal({ isOpen }) {
                           className="sr-only"
                           onChange={handleFileChange}
                           accept=".pdf"
+                          {...register("file", { required: "File is required" })}
                         />
                       </label>
                       <p className="pl-1">or drag and drop</p>
                     </div>
                     <p className="text-xs text-gray-500">PDF up to 10MB</p>
                   </div>
+                  {errors.file && (
+                    <p className="text-sm text-red-500">{errors.file.message}</p>
+                  )}
                 </div>
               </div>
 
               <div className="flex justify-end space-x-3">
                 <button
                   type="button"
-                  // onClick={onClose}
+                  onClick={onClose}
                   className="px-4 py-2 border border-gray-700 rounded-md text-gray-300 hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
                 >
                   Cancel

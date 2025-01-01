@@ -1,8 +1,25 @@
 import { AnimatePresence, motion } from "framer-motion";
 import { X } from "lucide-react";
+import { useForm } from "react-hook-form";
+import useClass from "../../hooks/useClass";
 
+const ClassCreateModal = ({ setToggleClassCreateModal }) => {
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+    reset,
+  } = useForm();
+  
+  const {useCreateClass} = useClass()
 
-const ClassCreateModal = ({setToggleClassCreateModal}) => {
+  const handleCreateClass = (data) => {
+    console.log("Class Data:", data);
+    // Perform your create class logic here
+    reset(); // Reset form after submission
+    setToggleClassCreateModal(false); // Close the modal
+  };
+
   return (
     <AnimatePresence>
       <motion.div
@@ -23,7 +40,7 @@ const ClassCreateModal = ({setToggleClassCreateModal}) => {
                 Create a class
               </h2>
               <button
-                onClick={()=>setToggleClassCreateModal(false)}
+                onClick={() => setToggleClassCreateModal(false)}
                 className="text-gray-400 hover:text-blue-400 transition duration-300 p-1"
                 aria-label="Close modal"
               >
@@ -31,45 +48,47 @@ const ClassCreateModal = ({setToggleClassCreateModal}) => {
               </button>
             </div>
 
-            <form className="space-y-4">
+            <form onSubmit={handleSubmit(handleCreateClass)} className="space-y-4">
               <div>
                 <label
-                  htmlFor="title"
+                  htmlFor="className"
                   className="block text-sm font-medium text-gray-300"
                 >
                   Class Name
                 </label>
                 <input
                   type="text"
-                  id="title"
-                  //   value={title}
-                  //   onChange={(e) => setTitle(e.target.value)}
+                  id="className"
+                  {...register("className", { required: "Class name is required" })}
                   className="mt-1 block w-full rounded-md bg-gray-800 border-gray-700 text-gray-300 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-500 focus:ring-opacity-50"
-                  required
                 />
+                {errors.className && (
+                  <p className="text-red-500 text-sm mt-1">{errors.className.message}</p>
+                )}
               </div>
+
               <div>
                 <label
-                  htmlFor="title"
+                  htmlFor="subject"
                   className="block text-sm font-medium text-gray-300"
                 >
                   Subject
                 </label>
                 <input
                   type="text"
-                  id="title"
-                  //   value={title}
-                  //   onChange={(e) => setTitle(e.target.value)}
+                  id="subject"
+                  {...register("subject", { required: "Subject is required" })}
                   className="mt-1 block w-full rounded-md bg-gray-800 border-gray-700 text-gray-300 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-500 focus:ring-opacity-50"
-                  required
                 />
+                {errors.subject && (
+                  <p className="text-red-500 text-sm mt-1">{errors.subject.message}</p>
+                )}
               </div>
-
 
               <div className="flex justify-end space-x-3">
                 <button
                   type="button"
-                  onClick={()=>setToggleClassCreateModal(false)}
+                  onClick={() => setToggleClassCreateModal(false)}
                   className="px-4 py-2 border border-gray-700 rounded-md text-gray-300 hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
                 >
                   Cancel

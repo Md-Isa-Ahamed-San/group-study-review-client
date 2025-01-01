@@ -1,10 +1,17 @@
 /* eslint-disable react/prop-types */
 
 import { motion, AnimatePresence } from "framer-motion";
-import {useState} from "react"
-const Sidebar = ({ isSidebarOpen,setToggleClassCreateModal,setToggleJoinClassModal }) => {
- 
-
+import useAuth from "../../hooks/useAuth";
+import useClass from "../../hooks/useClass"
+const Sidebar = ({
+  isSidebarOpen,
+  setToggleClassCreateModal,
+  setToggleJoinClassModal,
+}) => {
+  const { userData } = useAuth();
+  // const {useFetchClasses} = useClass()
+  // const {data:classes,isLoading,isError} = useFetchClasses()
+  console.log("userdata: ", userData);
   return (
     <AnimatePresence>
       {isSidebarOpen && (
@@ -16,10 +23,16 @@ const Sidebar = ({ isSidebarOpen,setToggleClassCreateModal,setToggleJoinClassMod
           className="p-6  bottom-0 w-64 bg-gray-800 text-white shadow-lg"
         >
           <h2 className="text-2xl font-bold mb-6 text-teal-400">Classes</h2>
-          <button onClick={()=>setToggleJoinClassModal(true)} className="w-full py-2 px-4 bg-teal-500 text-white rounded-md hover:bg-teal-600 transition duration-300">
+          <button
+            onClick={() => setToggleJoinClassModal(true)}
+            className="w-full py-2 px-4 bg-teal-500 text-white rounded-md hover:bg-teal-600 transition duration-300"
+          >
             Join a Class
           </button>
-          <button onClick={()=>setToggleClassCreateModal(true)} className="w-full mt-4 py-2 px-4 bg-gray-700 text-white rounded-md hover:bg-gray-600 transition duration-300">
+          <button
+            onClick={() => setToggleClassCreateModal(true)}
+            className="w-full mt-4 py-2 px-4 bg-gray-700 text-white rounded-md hover:bg-gray-600 transition duration-300"
+          >
             Create a Class
           </button>
 

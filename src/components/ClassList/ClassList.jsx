@@ -8,7 +8,7 @@ export default function ClassList() {
   const { useFetchClasses } = useClass();
 
   const { data: classList, isLoading, isError, error } = useFetchClasses();
-  console.log("classList : ", classList);
+  // console.log("classList : ", classList);
 
   if (isLoading) return <p>Loading users...</p>;
   if (isError) return <p>Error: {error.message}</p>;

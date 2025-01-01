@@ -2,6 +2,8 @@
 import { useState, useEffect } from "react";
 import { AuthContext } from "../contexts";
 import auth from "../firebase/firebase";
+import { useQuery } from "@tanstack/react-query";
+import axios from "axios";
 import {
   onAuthStateChanged,
   createUserWithEmailAndPassword,
@@ -14,7 +16,7 @@ const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  console.log("inside auth provider USER: ", user);
+
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
       setUser(currentUser);
@@ -22,7 +24,18 @@ const AuthProvider = ({ children }) => {
     });
 
     return () => unsubscribe();
-  }, [user?.email]);
+  }, []);
+
+  const { data: userData, isLoading: userDataLoading, error: userDataError } = useQuery({
+    queryKey: ["user", user?.email],
+    queryFn: async () => {
+      const { data } = await axios.get(`${import.meta.env.VITE_BASE_URL}/user/${user?.email}`);
+      console.log("user on mongo: ", data);
+      return data;
+    },
+    enabled: !!user?.email, // Fetch only if email exists
+  });
+  
 
   const signUp = async (email, password) => {
     setError(null);
@@ -48,7 +61,16 @@ const AuthProvider = ({ children }) => {
 
   return (
     <AuthContext.Provider
-      value={{ user, loading, error, signUp, login, logout, updateUsername }}
+      value={{
+        user,
+        userData,
+        loading: loading || userDataLoading,
+        error: error || userDataError,
+        signUp,
+        login,
+        logout,
+        updateUsername,
+      }}
     >
       {children}
     </AuthContext.Provider>
@@ -56,3 +78,6 @@ const AuthProvider = ({ children }) => {
 };
 
 export default AuthProvider;
+
+
+

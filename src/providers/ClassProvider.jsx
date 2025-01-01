@@ -1,5 +1,5 @@
 import { ClassContext } from '../contexts';
-import { useQuery } from "@tanstack/react-query";
+import { useQuery,useMutation } from "@tanstack/react-query";
 import axios from "axios";
 import useAuth from '../hooks/useAuth';
 const ClassProvider = ({children}) => {
@@ -15,10 +15,21 @@ const ClassProvider = ({children}) => {
     queryKey: ["users",user?.email],
     queryFn: fetchClasses,
   });
-    
+  
+  const createClass = async(class_name, description, created_by)=>{
+    const { data } = await axios.post(
+      `${import.meta.env.VITE_BASE_URL}/classes`,{
+        class_name, description, created_by
+      }
+    );
+    return data;
+  }
+  const useCreateClass = ()=>useMutation({
+    mutationFn:({class_name, description, created_by})=>createClass(class_name, description, created_by)
+  })
     return (
         <ClassContext.Provider
-          value={{ useFetchClasses}}
+          value={{ useCreateClass,useFetchClasses}}
         >
           {children}
         </ClassContext.Provider>
