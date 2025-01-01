@@ -2,15 +2,20 @@
 
 import { motion, AnimatePresence } from "framer-motion";
 import useAuth from "../../hooks/useAuth";
-import useClass from "../../hooks/useClass"
+import useClass from "../../hooks/useClass";
 const Sidebar = ({
   isSidebarOpen,
   setToggleClassCreateModal,
   setToggleJoinClassModal,
 }) => {
   const { userData } = useAuth();
-  // const {useFetchClasses} = useClass()
-  // const {data:classes,isLoading,isError} = useFetchClasses()
+  const { useFetchClasses } = useClass();
+
+  const { data: classList, isLoading, isError, error } = useFetchClasses();
+  console.log("class list inside sidebar: ", classList);
+  if (isLoading) return <p>Loading Class...</p>;
+  if (isError) return <p>Error: {error.message}</p>;
+
   console.log("userdata: ", userData);
   return (
     <AnimatePresence>
@@ -41,15 +46,14 @@ const Sidebar = ({
               My Classes
             </h3>
             <ul className="space-y-2">
-              <li className="py-2 px-4 bg-gray-700 rounded-md hover:bg-gray-600 transition duration-300">
-                Advanced Programming
-              </li>
-              <li className="py-2 px-4 bg-gray-700 rounded-md hover:bg-gray-600 transition duration-300">
-                Data Science 101
-              </li>
-              <li className="py-2 px-4 bg-gray-700 rounded-md hover:bg-gray-600 transition duration-300">
-                Web Development
-              </li>
+              {classList?.data?.map((classItem) => (
+                <li
+                  key={classItem._id} // Assuming each class item has a unique `_id`
+                  className="py-2 px-4 bg-gray-700 rounded-md hover:bg-gray-600 transition duration-300"
+                >
+                  {classItem.class_name} {/* Display the title of the class */}
+                </li>
+              ))}
             </ul>
           </div>
         </motion.div>

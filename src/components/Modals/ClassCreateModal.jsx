@@ -2,6 +2,7 @@ import { AnimatePresence, motion } from "framer-motion";
 import { X } from "lucide-react";
 import { useForm } from "react-hook-form";
 import useClass from "../../hooks/useClass";
+import useAuth from "../../hooks/useAuth";
 
 const ClassCreateModal = ({ setToggleClassCreateModal }) => {
   const {
@@ -10,14 +11,33 @@ const ClassCreateModal = ({ setToggleClassCreateModal }) => {
     formState: { errors },
     reset,
   } = useForm();
-  
-  const {useCreateClass} = useClass()
+  const { userData } = useAuth();
+  // console.log("user data inside classcreate modal: ",userData._id)
+  const { useCreateClass } = useClass();
+  const createClassMutation = useCreateClass(); // Get the mutation function
 
   const handleCreateClass = (data) => {
     console.log("Class Data:", data);
-    // Perform your create class logic here
-    reset(); // Reset form after submission
-    setToggleClassCreateModal(false); // Close the modal
+
+    // Call the mutation
+    createClassMutation.mutate(
+      {
+        class_name: data.className,
+        description: data.description,
+        created_by: userData._id, // Replace with the current user's ID or appropriate value
+      },
+      {
+        onSuccess: () => {
+          // Reset form and close modal on success
+          reset();
+          setToggleClassCreateModal(false);
+          console.log("Class created successfully");
+        },
+        onError: (error) => {
+          console.error("Error creating class:", error);
+        },
+      }
+    );
   };
 
   return (
@@ -48,7 +68,10 @@ const ClassCreateModal = ({ setToggleClassCreateModal }) => {
               </button>
             </div>
 
-            <form onSubmit={handleSubmit(handleCreateClass)} className="space-y-4">
+            <form
+              onSubmit={handleSubmit(handleCreateClass)}
+              className="space-y-4"
+            >
               <div>
                 <label
                   htmlFor="className"
@@ -59,29 +82,37 @@ const ClassCreateModal = ({ setToggleClassCreateModal }) => {
                 <input
                   type="text"
                   id="className"
-                  {...register("className", { required: "Class name is required" })}
+                  {...register("className", {
+                    required: "Class name is required",
+                  })}
                   className="mt-1 block w-full rounded-md bg-gray-800 border-gray-700 text-gray-300 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-500 focus:ring-opacity-50"
                 />
                 {errors.className && (
-                  <p className="text-red-500 text-sm mt-1">{errors.className.message}</p>
+                  <p className="text-red-500 text-sm mt-1">
+                    {errors.className.message}
+                  </p>
                 )}
               </div>
 
               <div>
                 <label
-                  htmlFor="subject"
+                  htmlFor="description"
                   className="block text-sm font-medium text-gray-300"
                 >
-                  Subject
+                  Description
                 </label>
-                <input
-                  type="text"
-                  id="subject"
-                  {...register("subject", { required: "Subject is required" })}
+                <textarea
+                  id="description"
+                  {...register("description", {
+                    required: "Description is required",
+                  })}
                   className="mt-1 block w-full rounded-md bg-gray-800 border-gray-700 text-gray-300 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-500 focus:ring-opacity-50"
-                />
-                {errors.subject && (
-                  <p className="text-red-500 text-sm mt-1">{errors.subject.message}</p>
+                  rows={4} // Adjust rows as needed
+                ></textarea>
+                {errors.description && (
+                  <p className="text-red-500 text-sm mt-1">
+                    {errors.description.message}
+                  </p>
                 )}
               </div>
 

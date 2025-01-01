@@ -17,7 +17,7 @@ export default function Dashboard() {
   const [toggleJoinClassModal,setToggleJoinClassModal] = useState(false)
   const { user } = useAuth();
 
-  // Fetch users using React Query
+  // Fetch usersClasslist using React Query
 
 
   return (
