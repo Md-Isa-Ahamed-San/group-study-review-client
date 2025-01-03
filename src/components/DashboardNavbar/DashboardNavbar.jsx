@@ -11,9 +11,27 @@ import {
   User,
   GraduationCap,
 } from "lucide-react";
+
+import { useParams } from "react-router-dom";
+
 import MenuIcon from "@mui/icons-material/Menu";
 import IconButton from "@mui/material/IconButton";
+import useTask from "../../hooks/useTask";
 const DashboardNavbar = ({ setIsSidebarOpen }) => {
+//   const { id } = useParams(); // Get the class ID from the route params
+//   const { useFetchClassesById } = useTask();
+
+//   // Fetch class data using the ID
+//   const {
+//     data: classData,
+//     isLoading,
+//     isError,
+//     error,
+//   } = useFetchClassesById(id);
+// console.log("classData inside d navbar: ",classData)
+//   if (isLoading) return <p>Loading class details...</p>;
+//   if (isError) return <p>Error: {error.message}</p>;
+
   return (
     <nav className="bg-gray-800 shadow-lg p-4 flex flex-wrap justify-between items-center sticky top-0">
       <div className="flex gap-4">
@@ -29,8 +47,8 @@ const DashboardNavbar = ({ setIsSidebarOpen }) => {
         <div className="flex items-center space-x-4">
           <GraduationCap className="h-6 w-6 text-teal-400" />
           <div>
-            <h2 className="text-lg font-semibold text-white">className</h2>
-            <p className="text-sm text-gray-400">subject</p>
+            {/* <h2 className="text-lg font-semibold text-white">{classData.class_name}</h2> */}
+            {/* <p className="text-sm text-gray-400">{classData.description}</p> */}
           </div>
         </div>
       </div>

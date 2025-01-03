@@ -13,7 +13,7 @@ import {
 } from "firebase/auth";
 
 const AuthProvider = ({ children }) => {
-  const [user, setUser] = useState(null);
+  const [user, setUser] = useState(null);//firebase user details
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
@@ -30,7 +30,7 @@ const AuthProvider = ({ children }) => {
     queryKey: ["user", user?.email],
     queryFn: async () => {
       const { data } = await axios.get(`${import.meta.env.VITE_BASE_URL}/user/${user?.email}`);
-      console.log("user on mongo: ", data);
+      // console.log("user on mongo: ", data);
       return data;
     },
     enabled: !!user?.email, // Fetch only if email exists
@@ -62,8 +62,8 @@ const AuthProvider = ({ children }) => {
   return (
     <AuthContext.Provider
       value={{
-        user,
-        userData,
+        user,//firebase user details
+        userData,//mongodb user details
         loading: loading || userDataLoading,
         error: error || userDataError,
         signUp,

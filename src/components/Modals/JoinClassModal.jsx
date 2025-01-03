@@ -1,19 +1,45 @@
+/* eslint-disable react/prop-types */
 import { AnimatePresence, motion } from "framer-motion";
 import { X } from "lucide-react";
-import React, { useState } from "react";
+import { useState } from "react";
+import { useQueryClient } from "@tanstack/react-query";
+import useAuth from "../../hooks/useAuth";
+import useClass from "../../hooks/useClass";
 
 const JoinClassModal = ({ setToggleJoinClassModal }) => {
   const [classCode, setClassCode] = useState("");
+  const { userData } = useAuth();
+  const { useJoinClass } = useClass();
+  const joinClassMutation = useJoinClass();
+  const queryClient = useQueryClient();
 
   const handleSubmit = (e) => {
     e.preventDefault();
+
     if (classCode.trim() === "") {
       alert("Please enter a valid class code.");
       return;
     }
-    // Handle class code submission logic here
-    console.log("Class code submitted:", classCode);
-    // setToggleJoinClassModal(false);
+
+    joinClassMutation.mutate(
+      { _id: userData._id, classCode },
+      {
+        onSuccess: () => {
+          // Refetch the class data
+          queryClient.invalidateQueries(["classes"]);
+          
+          // Success actions
+          alert("Successfully joined the class!");
+          setToggleJoinClassModal(false);
+          console.log("User joined the class successfully.");
+        },
+        onError: (error) => {
+          // Error handling
+          console.error("Error joining the class:", error.message);
+          alert(error.message || "Failed to join the class.");
+        },
+      }
+    );
   };
 
   return (
@@ -32,9 +58,7 @@ const JoinClassModal = ({ setToggleJoinClassModal }) => {
         >
           <div className="p-6">
             <div className="flex justify-between items-start mb-6">
-              <h2 className="text-2xl font-bold text-blue-400">
-                Join a Class
-              </h2>
+              <h2 className="text-2xl font-bold text-blue-400">Join a Class</h2>
               <button
                 onClick={() => setToggleJoinClassModal(false)}
                 className="text-gray-400 hover:text-blue-400 transition duration-300 p-1"

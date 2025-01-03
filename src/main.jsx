@@ -7,15 +7,18 @@ import "./index.css";
 
 import AuthProvider from "./providers/AuthProvider.jsx";
 import ClassProvider from "./providers/ClassProvider.jsx";
+import TaskProvider from "./providers/TaskProvider.jsx";
 const queryClient = new QueryClient();
 createRoot(document.getElementById("root")).render(
   <StrictMode>
     <QueryClientProvider client={queryClient}>
       <AuthProvider>
         <ClassProvider>
-          <Router>
-            <App />
-          </Router>
+          <TaskProvider>
+            <Router>
+              <App />
+            </Router>
+          </TaskProvider>
         </ClassProvider>
       </AuthProvider>
     </QueryClientProvider>

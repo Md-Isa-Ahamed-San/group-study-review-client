@@ -46,8 +46,8 @@ const RegistrationForm = ({ onToggle }) => {
   };
 
   return (
-    <div className="bg-blue-800 text-gray-300 rounded-lg shadow-lg p-10 w-96 mx-auto">
-      <h2 className="text-center font-bold text-2xl mb-8 text-gray-400">
+    <div className="bg-gray-100 text-gray-300 rounded-lg shadow-lg p-10 w-96 mx-auto">
+      <h2 className="text-center font-bold text-2xl mb-8 text-blue-900">
         REGISTER
       </h2>
       <form onSubmit={handleSubmit(onSubmit)}>
@@ -95,7 +95,7 @@ const RegistrationForm = ({ onToggle }) => {
             />
           </Field>
           {errorMessage && <p className="text-red-500 mb-4">{errorMessage}</p>}
-          <button className="w-full bg-gray-500 hover:bg-gray-600 text-gray-100 font-bold py-2 px-4 rounded transition-colors duration-300 mt-8">
+          <button className="w-full bg-blue-900 hover:bg-gray-600 text-gray-100 font-bold py-2 px-4 rounded transition-colors duration-300 mt-8">
             SIGN UP
           </button>
         </FieldSet>

@@ -25,8 +25,8 @@ const LoginForm = ({ onToggle }) => {
   };
 
   return (
-    <div className="bg-blue-800 text-gray-300 rounded-lg shadow-lg p-10 w-96 mx-auto">
-      <h2 className="text-center font-bold text-2xl mb-8 text-grey-400">
+    <div className="bg-gray-100 text-gray-300 rounded-lg shadow-lg p-10 w-96 mx-auto">
+      <h2 className="text-center font-bold text-2xl mb-8 text-blue-900">
         LOGIN
       </h2>
       <form onSubmit={handleSubmit(onSubmit)}>
@@ -38,7 +38,7 @@ const LoginForm = ({ onToggle }) => {
               name="email"
               id="email"
               placeholder="Enter your email"
-              className={`w-full text-gray-300 bg-blue-900 border-b ${
+              className={`w-full text-white bg-blue-900 border-b ${
                 errors.email ? "border-red-500" : "border-gray-600"
               } py-2 px-3 mb-6 outline-none focus:border-yellow-400 transition-colors`}
               required
@@ -57,13 +57,13 @@ const LoginForm = ({ onToggle }) => {
               name="password"
               id="password"
               placeholder="Enter your password"
-              className={`w-full text-gray-300 bg-blue-900 border-b ${
+              className={`w-full text-white bg-blue-900 border-b ${
                 errors.password ? "border-red-500" : "border-gray-600"
               } py-2 px-3 mb-6 outline-none focus:border-yellow-400 transition-colors`}
               required
             />
           </Field>
-          <button className="w-full bg-gray-500 hover:bg-gray-600 text-gray-100 font-bold py-2 px-4 rounded transition-colors duration-300 mt-8">
+          <button className="w-full bg-blue-900 hover:bg-gray-600 text-gray-100 font-bold py-2 px-4 rounded transition-colors duration-300 mt-8">
             LOGIN
           </button>
         </FieldSet>

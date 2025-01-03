@@ -4,26 +4,23 @@ import useClass from "../../hooks/useClass";
 import EmptyState from "../../shared/EmptyState";
 
 export default function ClassList() {
-  // Fetch users using React Query
   const { useFetchClasses } = useClass();
-
   const { data: classList, isLoading, isError, error } = useFetchClasses();
-  // console.log("classList : ", classList);
 
-  if (isLoading) return <p>Loading users...</p>;
+  console.log("class list inside ClassList component: ", classList);
+
+  if (isLoading) return <p>Loading Classes...</p>;
   if (isError) return <p>Error: {error.message}</p>;
+
+  const classes = classList?.data ?? []; // Fallback to an empty array
 
   return (
     <div>
-      {classList?.data ? (
-        <div className="gg">
-          {classList?.data.length === 0 ? (
-            <EmptyState message="Empty" />
-          ) : null}
-        </div>
+      {classes.length === 0 ? (
+        <EmptyState message="No classes available." />
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 px-6 py-8">
-          {classList?.data?.map((classItem) => (
+          {classes.map((classItem) => (
             <div
               key={classItem._id}
               className="bg-gradient-to-r from-gray-800 via-gray-900 to-black rounded-lg shadow-lg transform hover:scale-105 transition-transform duration-300 w-80 h-96 p-6 flex flex-col justify-between"
@@ -33,21 +30,27 @@ export default function ClassList() {
                   {classItem.class_name}
                 </h2>
                 <p className="text-gray-400 mb-4 line-clamp-3">
-                  {classItem.description}
+                  {classItem.description || "No description available."}
                 </p>
               </div>
               <div>
                 <div className="flex items-center justify-between mb-6">
                   <div className="flex items-center gap-2">
-                    <FaUserFriends className="text-blue-500" />
+                    <FaUserFriends
+                      className="text-blue-500"
+                      aria-label="Students"
+                    />
                     <p className="text-sm text-gray-400">
-                      Students: {classItem.members.length}
+                      Students: {classItem.members?.length || 0}
                     </p>
                   </div>
                   <div className="flex items-center gap-2">
-                    <FaChalkboardTeacher className="text-green-500" />
+                    <FaChalkboardTeacher
+                      className="text-green-500"
+                      aria-label="Experts"
+                    />
                     <p className="text-sm text-gray-400">
-                      Experts: {classItem.experts.length}
+                      Experts: {classItem.experts?.length || 0}
                     </p>
                   </div>
                 </div>

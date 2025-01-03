@@ -1,4 +1,4 @@
-import React, { useMemo } from "react";
+import { useMemo } from "react";
 import {
   ArrowUpDown,
   Bell,
@@ -10,51 +10,9 @@ import {
   ThumbsUp,
   User,
 } from "lucide-react";
-const ClassMembers = () => {
-  const classMembers = useMemo(
-    () => [
-      {
-        id: 1,
-        name: "Alex Johnson",
-        role: "Student",
-        avatar: "/placeholder.svg?height=40&width=40",
-      },
-      {
-        id: 2,
-        name: "Dr. Emily Chen",
-        role: "Expert",
-        avatar: "/placeholder.svg?height=40&width=40",
-      },
-      {
-        id: 3,
-        name: "Michael Lee",
-        role: "Student",
-        avatar: "/placeholder.svg?height=40&width=40",
-      },
-      {
-        id: 4,
-        name: "Prof. Sarah Williams",
-        role: "Expert",
-        avatar: "/placeholder.svg?height=40&width=40",
-      },
-      {
-        id: 5,
-        name: "David Brown",
-        role: "Student",
-        avatar: "/placeholder.svg?height=40&width=40",
-      },
-    ],
-    []
-  );
-  const experts = useMemo(
-    () => classMembers.filter((member) => member.role === "Expert"),
-    [classMembers]
-  );
-  const students = useMemo(
-    () => classMembers.filter((member) => member.role === "Student"),
-    [classMembers]
-  );
-
+const ClassMembers = ({members,experts}) => {
+ 
+console.log(members,experts)
   return (
     <div>
       <h2 className="text-2xl font-bold mb-4 text-teal-400">Class Members</h2>
@@ -75,7 +33,7 @@ const ClassMembers = () => {
               Experts
             </h3>
             <div className="space-y-2 max-h-40 overflow-y-auto">
-              {experts.map((member) => (
+              {experts?.map((member) => (
                 <div
                   key={member.id}
                   className="flex items-center space-x-3 p-2 hover:bg-gray-700 rounded transition duration-300"
@@ -97,21 +55,21 @@ const ClassMembers = () => {
           </div>
           <div>
             <h3 className="text-lg font-semibold text-teal-400 mb-2">
-              Students
+             Members
             </h3>
             <div className="space-y-2 max-h-40 overflow-y-auto">
-              {students.map((member) => (
+              {members?.map((member) => (
                 <div
-                  key={member.id}
+                  key={member._id}
                   className="flex items-center space-x-3 p-2 hover:bg-gray-700 rounded transition duration-300"
                 >
                   <img
-                    src={member.avatar}
-                    alt={member.name}
+                    src={member.profile_picture}
+                    alt={member.username}
                     className="w-10 h-10 rounded-full border-2 border-gray-600"
                   />
                   <div>
-                    <p className="font-semibold text-white">{member.name}</p>
+                    <p className="font-semibold text-white">{member.username}</p>
                     <p className="text-sm text-gray-400">Student</p>
                   </div>
                 </div>

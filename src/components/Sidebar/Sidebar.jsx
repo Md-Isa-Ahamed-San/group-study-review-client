@@ -3,6 +3,7 @@
 import { motion, AnimatePresence } from "framer-motion";
 import useAuth from "../../hooks/useAuth";
 import useClass from "../../hooks/useClass";
+import { Link } from "react-router-dom";
 const Sidebar = ({
   isSidebarOpen,
   setToggleClassCreateModal,
@@ -10,13 +11,12 @@ const Sidebar = ({
 }) => {
   const { userData } = useAuth();
   const { useFetchClasses } = useClass();
-
   const { data: classList, isLoading, isError, error } = useFetchClasses();
-  console.log("class list inside sidebar: ", classList);
+  // console.log("class list inside sidebar: ", classList);
   if (isLoading) return <p>Loading Class...</p>;
   if (isError) return <p>Error: {error.message}</p>;
 
-  console.log("userdata: ", userData);
+  // console.log("userdata: ", userData);
   return (
     <AnimatePresence>
       {isSidebarOpen && (
@@ -47,12 +47,15 @@ const Sidebar = ({
             </h3>
             <ul className="space-y-2">
               {classList?.data?.map((classItem) => (
-                <li
-                  key={classItem._id} // Assuming each class item has a unique `_id`
-                  className="py-2 px-4 bg-gray-700 rounded-md hover:bg-gray-600 transition duration-300"
-                >
-                  {classItem.class_name} {/* Display the title of the class */}
-                </li>
+                <Link key={classItem._id} to={`/dashboard/${classItem._id}`}>
+                  <li
+                    // Assuming each class item has a unique `_id`
+                    className="py-2 my-2 px-4 text-center bg-gray-700 rounded-md hover:bg-gray-600 transition duration-300"
+                  >
+                    {classItem.class_name}{" "}
+                    {/* Display the title of the class */}
+                  </li>
+                </Link>
               ))}
             </ul>
           </div>

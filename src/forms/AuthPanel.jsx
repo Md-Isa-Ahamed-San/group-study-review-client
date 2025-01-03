@@ -14,7 +14,7 @@ const AuthPanel = () => {
     } else setToggle(true);
   }, [location]);
   return (
-    <div className="relative bg-gradient-to-br from-blue-900 via-blue-700 to-blue-900 h-screen flex justify-center items-center">
+    <div className="relative bg-gradient-to-br bg-blue-900 h-screen flex justify-center items-center">
       <motion.div
         key={toggle ? "login" : "register"}
         initial={{
