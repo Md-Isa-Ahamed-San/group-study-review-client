@@ -39,10 +39,13 @@ const ClassProvider = ({ children }) => {
 
   const joinClass = async (_id, classCode) => {
     try {
-      const response = await axios.post(`${import.meta.env.VITE_BASE_URL}/classes/join`, {
-        class_code: classCode,
-        id:_id
-      });
+      const response = await axios.post(
+        `${import.meta.env.VITE_BASE_URL}/classes/join`,
+        {
+          class_code: classCode,
+          id: _id,
+        }
+      );
       return response.data;
     } catch (error) {
       throw new Error(error.response?.data?.message || "Failed to join class");
@@ -51,7 +54,7 @@ const ClassProvider = ({ children }) => {
 
   const useJoinClass = () =>
     useMutation({
-      mutationFn: ({_id, classCode }) => joinClass(_id,classCode),
+      mutationFn: ({ _id, classCode }) => joinClass(_id, classCode),
     });
 
   return (

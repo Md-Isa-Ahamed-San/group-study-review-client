@@ -40,7 +40,7 @@ export default function SubmissionReviewModal({ isOpen, onClose, assignment }) {
           <div className="max-h-[calc(100vh-40px)] overflow-y-auto">
             <div className="p-6">
               <div className="flex justify-between items-start mb-6">
-                <h2 className="text-3xl font-bold text-blue-400">{assignment.title}</h2>
+                {/* <h2 className="text-3xl font-bold text-blue-400">{assignment.title}</h2> */}
                 <button
                   onClick={onClose}
                   className="text-gray-400 hover:text-blue-400 transition duration-300 p-1"
@@ -54,32 +54,32 @@ export default function SubmissionReviewModal({ isOpen, onClose, assignment }) {
                 <div className="space-y-4">
                   <div className="flex items-center space-x-2 text-gray-300">
                     <User className="h-5 w-5 text-blue-400" />
-                    <span>Assignee: {assignment.assigneeName}</span>
+                    {/* <span>Assignee: {assignment.assigneeName}</span> */}
                   </div>
                   <div className="flex items-center space-x-2 text-gray-300">
                     <Calendar className="h-5 w-5 text-blue-400" />
-                    <span>Created: {assignment.creationDate}</span>
+                    {/* <span>Created: {assignment.creationDate}</span> */}
                   </div>
                   <div className="flex items-center space-x-2 text-gray-300">
                     <Calendar className="h-5 w-5 text-green-400" />
-                    <span>Completed: {assignment.completedDate}</span>
+                    {/* <span>Completed: {assignment.completedDate}</span> */}
                   </div>
                 </div>
                 <div className="space-y-4">
                   <div className="flex items-center space-x-2 text-gray-300">
                     <ThumbsUp className="h-5 w-5 text-yellow-400" />
-                    <span>Student Upvotes: {assignment.studentUpvotes}</span>
+                    {/* <span>Student Upvotes: {assignment.studentUpvotes}</span> */}
                   </div>
                   <div className="flex items-center space-x-2 text-gray-300">
                     <Award className="h-5 w-5 text-purple-400" />
-                    <span>Expert Upvotes: {assignment.expertUpvotes}</span>
+                    {/* <span>Expert Upvotes: {assignment.expertUpvotes}</span> */}
                   </div>
                 </div>
               </div>
 
               <div className="mb-6">
                 <h3 className="text-xl font-semibold mb-2 text-blue-400">Description</h3>
-                <p className="text-gray-300">{assignment.description}</p>
+                {/* <p className="text-gray-300">{assignment.description}</p> */}
               </div>
 
               <div className="mb-6">

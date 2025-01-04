@@ -27,10 +27,10 @@ const Sidebar = ({
           transition={{ type: "spring", stiffness: 400, damping: 30 }} // Smooth transition
           className="p-6  bottom-0 w-64 bg-gray-800 text-white shadow-lg"
         >
-          <h2 className="text-2xl font-bold mb-6 text-teal-400">Classes</h2>
+          <h2 className="text-2xl font-bold mb-6 text-white">Classes</h2>
           <button
             onClick={() => setToggleJoinClassModal(true)}
-            className="w-full py-2 px-4 bg-teal-500 text-white rounded-md hover:bg-teal-600 transition duration-300"
+            className="w-full py-2 px-4 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition duration-300"
           >
             Join a Class
           </button>
