@@ -3,7 +3,6 @@ import {
   ArrowUpDown,
   Bell,
   Book,
-  Home,
   Search,
   Settings,
   Star,
@@ -12,25 +11,15 @@ import {
   GraduationCap,
 } from "lucide-react";
 
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 
 import MenuIcon from "@mui/icons-material/Menu";
 import IconButton from "@mui/material/IconButton";
 import useTask from "../../hooks/useTask";
-const DashboardNavbar = ({ setIsSidebarOpen }) => {
-//   const { id } = useParams(); // Get the class ID from the route params
-//   const { useFetchClassesById } = useTask();
 
-//   // Fetch class data using the ID
-//   const {
-//     data: classData,
-//     isLoading,
-//     isError,
-//     error,
-//   } = useFetchClassesById(id);
-// console.log("classData inside d navbar: ",classData)
-//   if (isLoading) return <p>Loading class details...</p>;
-//   if (isError) return <p>Error: {error.message}</p>;
+const DashboardNavbar = ({ setIsSidebarOpen }) => {
+  // Initialize useNavigate for navigation
+  const navigate = useNavigate();
 
   return (
     <nav className="bg-gray-800 shadow-lg p-4 flex flex-wrap justify-between items-center sticky top-0">
@@ -42,7 +31,7 @@ const DashboardNavbar = ({ setIsSidebarOpen }) => {
           onClick={() => setIsSidebarOpen((prev) => !prev)}
           className="pl-8"
         >
-          <MenuIcon sx={{ color: "white", ml: 2 }} />{" "}
+          <MenuIcon sx={{ color: "white", ml: 2 }} />
         </IconButton>
         <div className="flex items-center space-x-4">
           <GraduationCap className="h-6 w-6 text-teal-400" />
@@ -55,19 +44,19 @@ const DashboardNavbar = ({ setIsSidebarOpen }) => {
 
       <div className="relative">
         <div className="flex items-center space-x-6">
-          {/* {isMobile && ( */}
+          {/* Home Button with Name */}
           <button
-            //   onClick={toggleSidebar}
-            className="text-teal-400 hover:text-teal-300 transition duration-300"
+            onClick={() => navigate("/")} // Navigate to the home page
+            className="text-teal-400 hover:bg-teal-500 hover:text-white px-4 py-2 rounded-md transition duration-300 font-semibold"
           >
-            <Book className="h-6 w-6" />
+            Home
           </button>
-          {/* )} */}
+
           <a
             href="#"
             className="text-gray-300 hover:text-teal-400 transition duration-300"
           >
-            <Home className="h-6 w-6" />
+            <Book className="h-6 w-6" />
           </a>
           <a
             href="#"

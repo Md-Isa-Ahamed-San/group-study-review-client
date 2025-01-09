@@ -30,7 +30,7 @@ const AuthProvider = ({ children }) => {
     queryKey: ["user", user?.email],
     queryFn: async () => {
       const { data } = await axios.get(`${import.meta.env.VITE_BASE_URL}/user/${user?.email}`);
-      // console.log("user on mongo: ", data);
+      console.log("user on mongo: ", data);
       return data;
     },
     enabled: !!user?.email, // Fetch only if email exists

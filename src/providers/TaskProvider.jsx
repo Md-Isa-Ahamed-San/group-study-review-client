@@ -44,6 +44,41 @@ const TaskProvider = ({ children }) => {
         submitTask({ task_id, userId, document }),
     });
 
+  const updateSubmitTask = async ({ document, submission_id,userId,taskId }) => {
+    try {
+      const response = await axios.patch(`${import.meta.env.VITE_BASE_URL}/submissions`, {
+        document, submission_id ,userId,taskId
+      });
+
+      return response.data; 
+    } catch (error) {
+      console.error("Error updating submission:", error);
+      throw new Error("Server error during submission update.");
+    }
+  };
+
+  // Custom hook to use the mutation for updating the submission
+  const useUpdateSubmitTask = () => {
+    return useMutation({
+      mutationFn: ({ document, submission_id,userId,taskId }) =>
+        updateSubmitTask({ document, submission_id ,userId,taskId}),
+    });
+  };
+
+  const getAllSubmissions = async (taskId) => {
+    const { data } = await axios.get(
+      `${import.meta.env.VITE_BASE_URL}/submissions/${taskId}`
+    );
+    return data;
+  };
+
+  const useGetAllSubmissions = (taskId) =>
+    useQuery({
+      queryKey: ["submissions", taskId],
+      queryFn: () => getAllSubmissions(taskId),
+      enabled: !!taskId, // Ensure the query only runs when taskId is truthy
+    });
+
   return (
     <TaskContext.Provider
       value={{
@@ -51,6 +86,8 @@ const TaskProvider = ({ children }) => {
         setToggleCreateTaskModal,
         useFetchClassesById,
         useSubmitTask,
+        useGetAllSubmissions,
+        useUpdateSubmitTask,
       }}
     >
       {children}

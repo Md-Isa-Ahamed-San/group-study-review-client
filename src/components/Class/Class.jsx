@@ -24,7 +24,7 @@ const Class = ({ setToggleCreateTaskModal }) => {
     (task) => task.status === "completed"
   );
   // console.log("🚀 ~ Class ~ completedTasks:", completedTasks)
-  // console.log("classData: ",classData)
+  console.log("classData: ",classData)
   if (isLoading) return <p>Loading class details...</p>;
   if (isError) return <p>Error: {error.message}</p>;
 
@@ -39,6 +39,8 @@ const Class = ({ setToggleCreateTaskModal }) => {
         <ClassMembers
           members={classData?.data?.members}
           experts={classData?.data?.experts}
+          admins ={classData?.data?.admins}
+          classCode={classData?.data?.class_code}
         />
       </div>
     </div>

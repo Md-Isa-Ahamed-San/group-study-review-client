@@ -19,11 +19,11 @@ export default function ClassList() {
       {classes.length === 0 ? (
         <EmptyState message="No classes available." />
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 px-6 py-8">
+        <div className="flex gap-8 px-6 py-8">
           {classes.map((classItem) => (
             <div
               key={classItem._id}
-              className="bg-gradient-to-r from-gray-800 via-gray-900 to-black rounded-lg shadow-lg transform hover:scale-105 transition-transform duration-300 w-80 h-96 p-6 flex flex-col justify-between"
+              className="bg-gradient-to-r from-[#1F2A40] to-[#141B2D]  rounded-lg shadow-lg transform transition-transform duration-300 w-80 h-72 p-6 flex flex-col justify-between"
             >
               <div>
                 <h2 className="text-2xl font-bold text-white mb-2">

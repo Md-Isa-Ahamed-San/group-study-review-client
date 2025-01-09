@@ -7,7 +7,7 @@ import ClassList from "./components/ClassList/ClassList";
 import Class from "./components/Class/Class";
 import Home from "./pages/Home/Home";
 import HomeRoutes from "./routes/HomeRoutes";
-
+import ViewAllSubmissions from "./pages/ViewAllSubmissions/ViewAllSubmissions"
 function App() {
   return (
     <Routes>
@@ -19,6 +19,7 @@ function App() {
         <Route path="dashboard" element={<Dashboard />}>
           <Route index element={<ClassList />} /> {/* Default route */}
           <Route path=":id" element={<Class />} /> {/* Dynamic route */}
+          <Route path=":classId/:taskId" element={<ViewAllSubmissions />} /> 
         </Route>
       </Route>
     </Routes>
