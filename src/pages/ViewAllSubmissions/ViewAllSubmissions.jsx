@@ -6,7 +6,7 @@ import {
   ThumbsUp,
   X,
 } from "lucide-react";
-
+import { useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
 import { Document, Page, pdfjs } from "react-pdf";
 import { useLocation, useParams } from "react-router-dom";
@@ -22,7 +22,8 @@ export default function ViewAllSubmissions() {
   const { assignment } = location.state || {};
   const { useGetAllSubmissions, useFetchClassesById, useUpvoteToggle } =
     useTask();
-  const { classId } = useParams();
+  const queryClient = useQueryClient();
+  const { classId, taskId } = useParams();
   const { userData } = useAuth();
 
   const { data: classData, isLoading: classDataLoading } =
@@ -33,9 +34,9 @@ export default function ViewAllSubmissions() {
     data: submissionResponse,
   } = useGetAllSubmissions(assignment?._id);
   const { upvoteToggleMutation } = useUpvoteToggle();
-
-  console.log("userData: ", userData);
-  console.log("classData: ", classData);
+console.log("submissionResponse: ",submissionResponse)
+  // console.log("userData: ", userData);
+  // console.log("classData: ", classData);
 
   const verifyUserType = () => {
     if (
@@ -71,9 +72,15 @@ export default function ViewAllSubmissions() {
         userId: userData._id,
       },
       {
+        onSuccess: () => {
+          console.log("Upvote toggled successfully.");
+          queryClient.invalidateQueries(["submissions", taskId]);
+        },
+      },
+      {
         onError: (error) => {
           console.error("Failed to toggle upvote:", error);
-          alert("Failed to toggle upvote")
+          alert("Failed to toggle upvote");
         },
       }
     );

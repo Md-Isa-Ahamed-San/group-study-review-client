@@ -57,6 +57,24 @@ const ClassProvider = ({ children }) => {
       mutationFn: ({ _id, classCode }) => joinClass(_id, classCode),
     });
 
+    const fetchFeedbacks = async (email) => {
+      if (!email) throw new Error("User email is required");
+      const response = await fetch(`/api/feedbacks?email=${email}`);
+      if (!response.ok) {
+        throw new Error("Failed to fetch feedbacks");
+      }
+      return response.json();
+    };
+    
+    const useFetchFeedbacks = (user) => {
+      return useQuery({
+        queryKey: ["feedbacks", user?.email],
+        queryFn: () => fetchFeedbacks(user?.email),
+        enabled: !!user?.email, // Only run the query if user email exists
+      });
+    };
+    
+
   return (
     <ClassContext.Provider
       value={{

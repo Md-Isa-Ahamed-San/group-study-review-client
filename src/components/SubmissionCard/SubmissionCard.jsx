@@ -1,17 +1,40 @@
 /* eslint-disable react/prop-types */
-import React, { useState } from "react";
+import { useState } from "react";
 import {
   CircleUserRound,
   FileText,
   ThumbsUp,
   Star,
-  ArrowUpDown,
+  MessageSquare,
 } from "lucide-react";
-import { useLocation, useParams } from "react-router-dom";
-import useTask from "../../hooks/useTask";
+import FeedbackModal from "../Modals/FeedbackModal";
 import useAuth from "../../hooks/useAuth";
 
 const SubmissionCard = ({ submission, handleUpvote, userType }) => {
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const { userData } = useAuth();
+  console.log("submissions: ", submission);
+
+  // Function to check if the user has already upvoted
+  const alreadyUpvoted = (type) => {
+    if (
+      type === "members" &&
+      submission?.user_upvotes?.includes(userData._id)
+    ) {
+      return true;
+    }
+    if (
+      type === "experts" &&
+      submission?.expert_upvotes?.includes(userData._id)
+    ) {
+      return true;
+    }
+    return false;
+  };
+
+  const openModal = () => setIsModalOpen(true);
+  const closeModal = () => setIsModalOpen(false);
+
   return (
     <div className="bg-gradient-to-br from-[#1F2A40] to-[#141B2D] border border-[#1F2A40] rounded-lg p-4">
       <div className="flex items-center justify-between mb-2">
@@ -48,22 +71,28 @@ const SubmissionCard = ({ submission, handleUpvote, userType }) => {
               <button
                 onClick={() => handleUpvote(submission._id)}
                 className={`flex items-center text-sm ${
-                  submission.user_upvotes.includes(submission._id)
-                    ? "text-[#00FFD1]"
-                    : "text-gray-400"
+                  alreadyUpvoted("members") ? "text-[#00FFD1]" : "text-gray-400"
                 } hover:text-[#00FFD1]/80`}
               >
-                <ThumbsUp className="h-4 w-4 mr-1" />{" "}
+                <ThumbsUp
+                  className={`h-4 w-4 mr-1 ${
+                    alreadyUpvoted("members") ? "fill-current" : ""
+                  }`}
+                />{" "}
                 {submission.user_upvotes.length}
               </button>
               <button
                 className={`flex items-center text-sm ${
-                  submission.expert_upvotes.includes(submission._id)
+                  alreadyUpvoted("experts")
                     ? "text-yellow-400"
                     : "text-gray-400"
-                } `}
+                }`}
               >
-                <Star className="h-4 w-4 mr-1" />{" "}
+                <Star
+                  className={`h-4 w-4 mr-1 ${
+                    alreadyUpvoted("experts") ? "fill-current" : ""
+                  }`}
+                />{" "}
                 {submission.expert_upvotes.length}
               </button>
             </>
@@ -72,29 +101,46 @@ const SubmissionCard = ({ submission, handleUpvote, userType }) => {
             <>
               <button
                 className={`flex items-center text-sm ${
-                  submission.user_upvotes.includes(submission._id)
-                    ? "text-[#00FFD1]"
-                    : "text-gray-400"
-                } `}
+                  alreadyUpvoted("members") ? "text-[#00FFD1]" : "text-gray-400"
+                }`}
               >
-                <ThumbsUp className="h-4 w-4 mr-1" />{" "}
+                <ThumbsUp
+                  className={`h-4 w-4 mr-1 ${
+                    alreadyUpvoted("members") ? "fill-current" : ""
+                  }`}
+                />{" "}
                 {submission.user_upvotes.length}
               </button>
               <button
                 onClick={() => handleUpvote(submission._id)}
                 className={`flex items-center text-sm ${
-                  submission.expert_upvotes.includes(submission._id)
+                  alreadyUpvoted("experts")
                     ? "text-yellow-400"
                     : "text-gray-400"
                 } hover:text-yellow-300`}
               >
-                <Star className="h-4 w-4 mr-1" />{" "}
+                <Star
+                  className={`h-4 w-4 mr-1 ${
+                    alreadyUpvoted("experts") ? "fill-current" : ""
+                  }`}
+                />{" "}
                 {submission.expert_upvotes.length}
               </button>
             </>
           )}
+          <button
+            onClick={openModal}
+            className="flex items-center text-sm text-gray-400 hover:text-[#00FFD1]"
+          >
+            <MessageSquare className="h-4 w-4 mr-1" /> Feedback
+          </button>
         </div>
       </div>
+      <FeedbackModal
+        isOpen={isModalOpen}
+        onClose={closeModal}
+        submissionId={submission?._id}
+      />
     </div>
   );
 };

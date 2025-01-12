@@ -3,7 +3,7 @@ import axios from "axios";
 import { useState } from "react";
 import { TaskContext } from "../contexts";
 import useAuth from "../hooks/useAuth";
-
+const BASE_URL = import.meta.env.VITE_BASE_URL || "http://localhost:5000";
 const TaskProvider = ({ children }) => {
   // Function to fetch classes by ID
   const [toggleCreateTaskModal, setToggleCreateTaskModal] = useState(false);
@@ -26,14 +26,11 @@ const TaskProvider = ({ children }) => {
     });
   };
   const submitTask = async ({ task_id, userId, document }) => {
-    const { data } = await axios.post(
-      `${import.meta.env.VITE_BASE_URL}/submissions`,
-      {
-        task_id,
-        userId,
-        document,
-      }
-    );
+    const { data } = await axios.post(`${BASE_URL}/submissions`, {
+      task_id,
+      userId,
+      document,
+    });
     console.log("data inside sibmit task : ", submitTask);
     return data;
   };
@@ -77,29 +74,24 @@ const TaskProvider = ({ children }) => {
   };
 
   const getAllSubmissions = async (taskId) => {
-    const { data } = await axios.get(
-      `${import.meta.env.VITE_BASE_URL}/submissions/${taskId}`
-    );
+    const { data } = await axios.get(`${BASE_URL}/submissions/${taskId}`);
     return data;
   };
 
   const useGetAllSubmissions = (taskId) =>
     useQuery({
-      queryKey: ["submissions", taskId],
+      queryKey: ["submissions", taskId], // Include userId in the query key
       queryFn: () => getAllSubmissions(taskId),
-      enabled: !!taskId, // Ensure the query only runs when taskId is truthy
+      enabled: !!taskId, // Ensure query runs only when both are truthy
     });
 
   const upvoteToggle = async ({ submissionId, userType, userId }) => {
     try {
-      const response = await axios.patch(
-        `${import.meta.env.VITE_BASE_URL}/submissions/upvote`,
-        {
-          submissionId,
-          userType,
-          userId,
-        }
-      );
+      const response = await axios.patch(`${BASE_URL}/submissions/upvote`, {
+        submissionId,
+        userType,
+        userId,
+      });
 
       return response.data; // Axios directly provides the data property from the response
     } catch (error) {
@@ -113,14 +105,49 @@ const TaskProvider = ({ children }) => {
   };
   const useUpvoteToggle = () => {
     const mutation = useMutation({
-      mutationFn: ({ submissionId, userType, userId }) =>
-        axios.patch(`${import.meta.env.VITE_BASE_URL}/submissions/upvote`, { submissionId, userType, userId }),
+      mutationFn: upvoteToggle,
     });
-  
+
     return { upvoteToggleMutation: mutation };
   };
-  
 
+  const fetchFeedbacks = async (submissionId) => {
+    console.log("submission id: ", submissionId);
+    if (!submissionId) throw new Error("Submission ID is required");
+    const { data } = await axios.get(`${BASE_URL}/feedbacks`, {
+      params: { submissionId },
+    });
+    return data;
+  };
+
+  const useFetchFeedbacks = ({ submissionId }) =>
+    useQuery({
+      queryKey: ["feedbacks", submissionId],
+      queryFn: () => fetchFeedbacks(submissionId),
+      enabled: !!submissionId,
+    });
+
+  const postFeedback = async ({ submissionId, content }) => {
+    if (!submissionId || !content)
+      throw new Error("Submission ID and content are required");
+
+    const { data } = await axios.post(`${BASE_URL}/feedbacks`, {
+      submissionId,
+      content,
+    });
+    return data;
+  };
+  const usePostFeedback = () => {
+    return useMutation({
+      mutationFn: postFeedback,
+      onSuccess: (data) => {
+        console.log("Feedback submitted successfully:", data);
+      },
+      onError: (error) => {
+        console.error("Error submitting feedback:", error);
+      },
+    });
+  };
   return (
     <TaskContext.Provider
       value={{
@@ -131,6 +158,8 @@ const TaskProvider = ({ children }) => {
         useGetAllSubmissions,
         useUpdateSubmitTask,
         useUpvoteToggle,
+        useFetchFeedbacks,
+        usePostFeedback,
       }}
     >
       {children}

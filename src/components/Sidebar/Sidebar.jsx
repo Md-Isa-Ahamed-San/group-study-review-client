@@ -25,9 +25,9 @@ const Sidebar = ({
           animate={{ x: 0 }} // Animate to onscreen
           exit={{ x: -300 }} // Slide off to the right when closing
           transition={{ type: "spring", stiffness: 400, damping: 30 }} // Smooth transition
-          className="p-6  bottom-0 w-64 bg-gray-800 text-white shadow-lg"
+          className="p-6 py-10  bottom-0 w-64 bg-gray-800 text-white shadow-lg"
         >
-          <h2 className="text-2xl font-bold mb-6 text-white">Classes</h2>
+          
           <button
             onClick={() => setToggleJoinClassModal(true)}
             className="w-full py-2 px-4 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition duration-300"

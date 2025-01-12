@@ -34,14 +34,14 @@ const DashboardNavbar = ({ setIsSidebarOpen }) => {
         </IconButton>
         <div className="flex items-center space-x-4">
   <GraduationCap className="h-7 w-7 text-white" />
-  <Link to="/" className="flex items-center">
+  <Link to="/dashboard" className="flex items-center">
     <p className="text-white text-2xl hover:underline hover:underline-offset-2">
       EduConnect
     </p>
   </Link>
 
   {/* Conditionally render the class name with a ">" separator */}
-  {classId && classData && classData.data && !isLoading && !isError && (
+  {classId && classData && classData?.data && !isLoading && !isError && (
     <Link to={`/dashboard/${classData.data._id}`} className="flex items-center">
       <span className="text-white text-2xl mx-2">{">"}</span>
       <p className="text-blue-500 text-2xl hover:underline hover:underline-offset-2 transition duration-300">
