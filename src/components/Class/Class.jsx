@@ -6,7 +6,7 @@ import { useParams } from "react-router-dom";
 import useTask from "../../hooks/useTask";
 
 const Class = ({ setToggleCreateTaskModal }) => {
-  const { id } = useParams(); // Get the class ID from the route params
+  const { classId } = useParams(); // Get the class ID from the route params
   const { useFetchClassesById } = useTask();
   // console.log("id of class inside class :",id)
   // Fetch class data using the ID
@@ -15,7 +15,7 @@ const Class = ({ setToggleCreateTaskModal }) => {
     isLoading,
     isError,
     error,
-  } = useFetchClassesById(id);
+  } = useFetchClassesById(classId);
 
   const activeTasks = classData?.data?.tasks?.filter(
     (task) => task.status === "ongoing"

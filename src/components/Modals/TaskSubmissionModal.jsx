@@ -16,9 +16,9 @@ const TaskSubmissionModal = ({ task, onClose, isSubmittedByCurrentUser }) => {
   const { userData } = useAuth();
   // console.log("user Data: ", userData);
   const res = task.submissions.filter((item) => item.userId === userData._id);
-  const submissionId = res[0]._id;
-  // console.log("🚀 ~ TaskSubmissionModal ~ submissionId:", submissionId);
-  // console.log("🚀 ~ TaskSubmissionModal ~ userData:", userData);
+  const submissionId = res[0]?._id;
+  console.log("🚀 ~ TaskSubmissionModal ~ submissionId:", submissionId);
+  console.log("🚀 ~ TaskSubmissionModal ~ userData:", userData);
   const submitTaskMutation = useSubmitTask();
   const updateTaskMutation = useUpdateSubmitTask();
   const queryClient = useQueryClient();

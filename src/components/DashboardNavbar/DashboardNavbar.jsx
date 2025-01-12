@@ -1,18 +1,6 @@
-import React, { useState, useEffect } from "react";
-import {
-  ArrowUpDown,
-  Bell,
-  Book,
-  Search,
-  Settings,
-  Star,
-  ThumbsUp,
-  User,
-  GraduationCap,
-} from "lucide-react";
-
-import { useParams, useNavigate } from "react-router-dom";
-
+import { Book, GraduationCap, Settings, User } from "lucide-react";
+import React from "react";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import MenuIcon from "@mui/icons-material/Menu";
 import IconButton from "@mui/material/IconButton";
 import useTask from "../../hooks/useTask";
@@ -20,26 +8,49 @@ import useTask from "../../hooks/useTask";
 const DashboardNavbar = ({ setIsSidebarOpen }) => {
   // Initialize useNavigate for navigation
   const navigate = useNavigate();
+  const { classId } = useParams();
+  console.log("id: ", classId);
+  const { useFetchClassesById } = useTask();
+
+  // Fetch class data using the ID
+  const {
+    data: classData,
+    isLoading,
+    isError,
+    error,
+  } = useFetchClassesById(classId);
 
   return (
-    <nav className="bg-gray-800 shadow-lg p-4 flex flex-wrap justify-between items-center sticky top-0">
+    <nav className="bg-gray-800 shadow-lg p-4 flex flex-wrap justify-between items-center sticky top-0 z-10">
       <div className="flex gap-4">
         <IconButton
           color="inherit"
           aria-label="open drawer"
           edge="start"
           onClick={() => setIsSidebarOpen((prev) => !prev)}
-          className="pl-8"
+          className="pl-8 "
         >
           <MenuIcon sx={{ color: "white", ml: 2 }} />
         </IconButton>
         <div className="flex items-center space-x-4">
-          <GraduationCap className="h-6 w-6 text-teal-400" />
-          <div>
-            {/* <h2 className="text-lg font-semibold text-white">{classData.class_name}</h2> */}
-            {/* <p className="text-sm text-gray-400">{classData.description}</p> */}
-          </div>
-        </div>
+  <GraduationCap className="h-7 w-7 text-white" />
+  <Link to="/" className="flex items-center">
+    <p className="text-white text-2xl hover:underline hover:underline-offset-2">
+      EduConnect
+    </p>
+  </Link>
+
+  {/* Conditionally render the class name with a ">" separator */}
+  {classId && classData && classData.data && !isLoading && !isError && (
+    <Link to={`/dashboard/${classData.data._id}`} className="flex items-center">
+      <span className="text-white text-2xl mx-2">{">"}</span>
+      <p className="text-blue-500 text-2xl hover:underline hover:underline-offset-2 transition duration-300">
+        {classData.data.class_name}
+      </p>
+    </Link>
+  )}
+</div>
+
       </div>
 
       <div className="relative">

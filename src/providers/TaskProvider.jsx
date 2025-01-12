@@ -1,4 +1,4 @@
-import { useQuery, useMutation } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import axios from "axios";
 import { useState } from "react";
 import { TaskContext } from "../contexts";
@@ -44,13 +44,24 @@ const TaskProvider = ({ children }) => {
         submitTask({ task_id, userId, document }),
     });
 
-  const updateSubmitTask = async ({ document, submission_id,userId,taskId }) => {
+  const updateSubmitTask = async ({
+    document,
+    submission_id,
+    userId,
+    taskId,
+  }) => {
     try {
-      const response = await axios.patch(`${import.meta.env.VITE_BASE_URL}/submissions`, {
-        document, submission_id ,userId,taskId
-      });
+      const response = await axios.patch(
+        `${import.meta.env.VITE_BASE_URL}/submissions`,
+        {
+          document,
+          submission_id,
+          userId,
+          taskId,
+        }
+      );
 
-      return response.data; 
+      return response.data;
     } catch (error) {
       console.error("Error updating submission:", error);
       throw new Error("Server error during submission update.");
@@ -60,8 +71,8 @@ const TaskProvider = ({ children }) => {
   // Custom hook to use the mutation for updating the submission
   const useUpdateSubmitTask = () => {
     return useMutation({
-      mutationFn: ({ document, submission_id,userId,taskId }) =>
-        updateSubmitTask({ document, submission_id ,userId,taskId}),
+      mutationFn: ({ document, submission_id, userId, taskId }) =>
+        updateSubmitTask({ document, submission_id, userId, taskId }),
     });
   };
 
@@ -79,6 +90,37 @@ const TaskProvider = ({ children }) => {
       enabled: !!taskId, // Ensure the query only runs when taskId is truthy
     });
 
+  const upvoteToggle = async ({ submissionId, userType, userId }) => {
+    try {
+      const response = await axios.patch(
+        `${import.meta.env.VITE_BASE_URL}/submissions/upvote`,
+        {
+          submissionId,
+          userType,
+          userId,
+        }
+      );
+
+      return response.data; // Axios directly provides the data property from the response
+    } catch (error) {
+      console.error("Error toggling upvote:", error);
+
+      // Throw a custom error message based on the response, or the default error message
+      const errorMessage =
+        error.response?.data?.message || "Failed to toggle upvote";
+      throw new Error(errorMessage);
+    }
+  };
+  const useUpvoteToggle = () => {
+    const mutation = useMutation({
+      mutationFn: ({ submissionId, userType, userId }) =>
+        axios.patch(`${import.meta.env.VITE_BASE_URL}/submissions/upvote`, { submissionId, userType, userId }),
+    });
+  
+    return { upvoteToggleMutation: mutation };
+  };
+  
+
   return (
     <TaskContext.Provider
       value={{
@@ -88,6 +130,7 @@ const TaskProvider = ({ children }) => {
         useSubmitTask,
         useGetAllSubmissions,
         useUpdateSubmitTask,
+        useUpvoteToggle,
       }}
     >
       {children}
