@@ -3,7 +3,7 @@ import axios from "axios";
 import { useState } from "react";
 import { TaskContext } from "../contexts";
 import useAuth from "../hooks/useAuth";
-const BASE_URL = import.meta.env.VITE_BASE_URL || "http://localhost:5000";
+const BASE_URL = import.meta.env.VITE_BASE_URL || "http://localhost:5000/api";
 const TaskProvider = ({ children }) => {
   // Function to fetch classes by ID
   const [toggleCreateTaskModal, setToggleCreateTaskModal] = useState(false);
@@ -128,25 +128,20 @@ const TaskProvider = ({ children }) => {
       enabled: !!submissionId,
     });
 
-  const postFeedback = async ({ submissionId, content }) => {
-    if (!submissionId || !content)
+  const postFeedback = async ({ submissionId, content, user_id }) => {
+    if (!submissionId || !content || !user_id)
       throw new Error("Submission ID and content are required");
 
     const { data } = await axios.post(`${BASE_URL}/feedbacks`, {
-      submissionId,
+      submission_id: submissionId,
       content,
+      user_id,
     });
     return data;
   };
   const usePostFeedback = () => {
     return useMutation({
       mutationFn: postFeedback,
-      onSuccess: (data) => {
-        console.log("Feedback submitted successfully:", data);
-      },
-      onError: (error) => {
-        console.error("Error submitting feedback:", error);
-      },
     });
   };
   return (

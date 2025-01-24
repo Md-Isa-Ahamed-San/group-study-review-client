@@ -122,7 +122,6 @@ export default function ViewAllSubmissions() {
                 setIsModalOpen={setIsModalOpen}
                 openModal={openModal}
                 closeModal={closeModal}
-                
               />
             ))}
           </div>
@@ -134,10 +133,8 @@ export default function ViewAllSubmissions() {
           isOpen={isModalOpen}
           onClose={closeModal}
           submissionId={selectedSubmissionId || null}
-        
         />
       )}
-      
     </div>
   );
 }
