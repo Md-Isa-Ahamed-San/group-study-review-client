@@ -8,7 +8,7 @@ import JoinClassModal from "../../components/Modals/JoinClassModal";
 import TaskModal from "../../components/Modals/TaskModal";
 import useClass from "../../hooks/useClass";
 import useTask from "../../hooks/useTask";
-import {useParams} from 'react-router-dom'
+import { useParams } from "react-router-dom";
 export default function Dashboard() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const {
@@ -17,11 +17,11 @@ export default function Dashboard() {
     toggleClassCreateModal,
     setToggleClassCreateModal,
   } = useClass();
-  const {toggleCreateTaskModal} =useTask()
+  const { toggleCreateTaskModal } = useTask();
   const { user } = useAuth();
 
   // Fetch usersClasslist using React Query
-  const {id}  = useParams();
+  const { id } = useParams();
 
   return (
     <>
@@ -50,9 +50,7 @@ export default function Dashboard() {
           ) : null}
           {toggleCreateTaskModal ? (
             <div className="absolute">
-              <TaskModal
-              class_id={id}
-              />
+              <TaskModal class_id={id} />
             </div>
           ) : null}
         </div>

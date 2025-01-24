@@ -102,7 +102,7 @@ export default function ViewAllSubmissions() {
   );
 
   return (
-    <div className="min-h-screen bg-[#0B1120] text-gray-100 p-6 relative">
+    <div className=" text-gray-100 p-6 relative">
       <div className="bg-gradient-to-br from-[#1F2A40] to-[#141B2D] border border-[#1F2A40] rounded-lg p-6">
         <h1 className="text-3xl font-extrabold text-[#00FFD1] mb-3">
           {assignment?.title || "Submissions"}
