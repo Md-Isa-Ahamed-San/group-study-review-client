@@ -7,6 +7,7 @@ const BASE_URL = import.meta.env.VITE_BASE_URL || "http://localhost:5000";
 const TaskProvider = ({ children }) => {
   // Function to fetch classes by ID
   const [toggleCreateTaskModal, setToggleCreateTaskModal] = useState(false);
+  const [selectedSubmissionId, setSelectedSubmissionId] = useState(null);
   const { userData } = useAuth();
   const fetchClassesById = async (id) => {
     // console.log("id in task provider: ",id)
@@ -160,6 +161,8 @@ const TaskProvider = ({ children }) => {
         useUpvoteToggle,
         useFetchFeedbacks,
         usePostFeedback,
+        selectedSubmissionId,
+        setSelectedSubmissionId,
       }}
     >
       {children}

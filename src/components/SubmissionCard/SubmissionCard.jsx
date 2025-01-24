@@ -1,19 +1,25 @@
 /* eslint-disable react/prop-types */
-import { useState } from "react";
 import {
   CircleUserRound,
   FileText,
-  ThumbsUp,
-  Star,
   MessageSquare,
+  Star,
+  ThumbsUp,
 } from "lucide-react";
-import FeedbackModal from "../Modals/FeedbackModal";
 import useAuth from "../../hooks/useAuth";
+import useTask from "../../hooks/useTask";
 
-const SubmissionCard = ({ submission, handleUpvote, userType }) => {
-  const [isModalOpen, setIsModalOpen] = useState(false);
+const SubmissionCard = ({
+  submission,
+  handleUpvote,
+  userType,
+  setIsModalOpen,
+  openModal,
+}) => {
   const { userData } = useAuth();
-  console.log("submissions: ", submission);
+  // console.log("submissions: ", submission);
+
+  const { setSelectedSubmissionId } = useTask();
 
   // Function to check if the user has already upvoted
   const alreadyUpvoted = (type) => {
@@ -31,10 +37,10 @@ const SubmissionCard = ({ submission, handleUpvote, userType }) => {
     }
     return false;
   };
-
-  const openModal = () => setIsModalOpen(true);
-  const closeModal = () => setIsModalOpen(false);
-
+const handleOpenModal = ()=>{
+  setSelectedSubmissionId(submission._id)
+  openModal()
+}
   return (
     <div className="bg-gradient-to-br from-[#1F2A40] to-[#141B2D] border border-[#1F2A40] rounded-lg p-4">
       <div className="flex items-center justify-between mb-2">
@@ -129,18 +135,13 @@ const SubmissionCard = ({ submission, handleUpvote, userType }) => {
             </>
           )}
           <button
-            onClick={openModal}
+            onClick={handleOpenModal}
             className="flex items-center text-sm text-gray-400 hover:text-[#00FFD1]"
           >
             <MessageSquare className="h-4 w-4 mr-1" /> Feedback
           </button>
         </div>
       </div>
-      <FeedbackModal
-        isOpen={isModalOpen}
-        onClose={closeModal}
-        submissionId={submission?._id}
-      />
     </div>
   );
 };

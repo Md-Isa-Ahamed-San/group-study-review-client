@@ -3,7 +3,7 @@ import { ArrowUpDown, ThumbsUp, Star } from "lucide-react";
 import { Link } from "react-router-dom";
 
 const CompletedTasks = ({ tasks }) => {
-  console.log("cmp:", tasks);
+  // console.log("cmp:", tasks);
   return (
     <div className="space-y-4">
       <h2 className="text-2xl font-bold mb-4 text-blue-500">Completed Tasks</h2>

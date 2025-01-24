@@ -1,87 +1,105 @@
-import { Book, GraduationCap, Settings, User } from "lucide-react";
-import React from "react";
+import { useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
+import { GraduationCap } from "lucide-react";
 import MenuIcon from "@mui/icons-material/Menu";
 import IconButton from "@mui/material/IconButton";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faUser, faSignOutAlt } from "@fortawesome/free-solid-svg-icons";
 import useTask from "../../hooks/useTask";
-
+import useAuth from "../../hooks/useAuth";
+import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 const DashboardNavbar = ({ setIsSidebarOpen }) => {
-  // Initialize useNavigate for navigation
   const navigate = useNavigate();
   const { classId } = useParams();
-  console.log("id: ", classId);
   const { useFetchClassesById } = useTask();
+  const { logout,user } = useAuth();
 
-  // Fetch class data using the ID
-  const {
-    data: classData,
-    isLoading,
-    isError,
-    error,
-  } = useFetchClassesById(classId);
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
 
+  const { data: classData, isLoading, isError } = useFetchClassesById(classId);
+
+  const toggleMenu = () => setIsMenuOpen((prev) => !prev);
+
+  const handleLogout = async () => {
+    await logout();
+    console.log("User logged out");
+    navigate("/authPanel?mode=signin"); // Redirect to login after logout
+  };
   return (
-    <nav className="bg-gray-800 shadow-lg p-4 flex flex-wrap justify-between items-center sticky top-0 z-10">
-      <div className="flex gap-4">
+    <nav className="bg-gray-800 shadow-lg p-4 flex justify-between items-center sticky top-0 z-10">
+      <div className="flex gap-4 items-center">
+        {/* Sidebar Toggle */}
+        
         <IconButton
           color="inherit"
           aria-label="open drawer"
           edge="start"
           onClick={() => setIsSidebarOpen((prev) => !prev)}
-          className="pl-8 "
         >
-          <MenuIcon sx={{ color: "white", ml: 2 }} />
+          <MenuIcon sx={{ color: "white" }} />
         </IconButton>
+
+        {/* Logo and Class Name */}
         <div className="flex items-center space-x-4">
-  <GraduationCap className="h-7 w-7 text-white" />
-  <Link to="/dashboard" className="flex items-center">
-    <p className="text-white text-2xl hover:underline hover:underline-offset-2">
-      EduConnect
-    </p>
-  </Link>
+          <GraduationCap className="h-7 w-7 text-white" />
+          <Link to="/dashboard" className="text-white text-2xl hover:underline">
+            EduConnect
+          </Link>
 
-  {/* Conditionally render the class name with a ">" separator */}
-  {classId && classData && classData?.data && !isLoading && !isError && (
-    <Link to={`/dashboard/${classData.data._id}`} className="flex items-center">
-      <span className="text-white text-2xl mx-2">{">"}</span>
-      <p className="text-blue-500 text-2xl hover:underline hover:underline-offset-2 transition duration-300">
-        {classData.data.class_name}
-      </p>
-    </Link>
-  )}
-</div>
-
+          {/* Class Name */}
+          {classId &&
+            classData &&
+            classData?.data &&
+            !isLoading &&
+            !isError && (
+              <Link
+                to={`/dashboard/${classData.data._id}`}
+                className="flex items-center"
+              >
+                <span className="text-white text-2xl mx-2">{">"}</span>
+                <p className="text-blue-500 text-2xl hover:underline">
+                  {classData.data.class_name}
+                </p>
+              </Link>
+            )}
+        </div>
       </div>
 
+      {/* Menu Icon for Profile and Logout */}
+      <div className="flex gap-4 justify-center items-center">
+      <p className="text-white">
+          Welcome , <span className="text-blue-400">{user?.displayName}</span>{" "}
+        </p>
       <div className="relative">
-        <div className="flex items-center space-x-6">
-          {/* Home Button with Name */}
-          <button
-            onClick={() => navigate("/")} // Navigate to the home page
-            className="text-teal-400 hover:bg-teal-500 hover:text-white px-4 py-2 rounded-md transition duration-300 font-semibold"
-          >
-            Home
-          </button>
+        
+        <IconButton
+          onClick={toggleMenu}
+          className="flex items-center justify-center w-10 h-10 bg-gray-300 hover:bg-gray-600 text-white rounded-full transition-colors"
+        >
+          <AccountCircleIcon className="text-white" />
+        </IconButton>
 
-          <a
-            href="#"
-            className="text-gray-300 hover:text-teal-400 transition duration-300"
-          >
-            <Book className="h-6 w-6" />
-          </a>
-          <a
-            href="#"
-            className="text-gray-300 hover:text-teal-400 transition duration-300"
-          >
-            <User className="h-6 w-6" />
-          </a>
-          <a
-            href="#"
-            className="text-gray-300 hover:text-teal-400 transition duration-300"
-          >
-            <Settings className="h-6 w-6" />
-          </a>
-        </div>
+        {/* Dropdown Menu */}
+        {isMenuOpen && (
+          <div className="absolute right-0 mt-2 w-48 bg-white shadow-lg rounded-md z-20">
+            <Link
+              to="/profile"
+              className="block px-4 py-2 text-gray-800 hover:bg-gray-200 flex items-center"
+              onClick={() => setIsMenuOpen(false)}
+            >
+              <FontAwesomeIcon icon={faUser} className="mr-2" />
+              Profile
+            </Link>
+            <button
+              onClick={handleLogout}
+              className="block w-full text-left px-4 py-2 text-gray-800 hover:bg-gray-200 flex items-center"
+            >
+              <FontAwesomeIcon icon={faSignOutAlt} className="mr-2" />
+              Logout
+            </button>
+          </div>
+        )}
+      </div>
       </div>
     </nav>
   );

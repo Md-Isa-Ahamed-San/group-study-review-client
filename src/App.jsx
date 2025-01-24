@@ -19,7 +19,7 @@ function App() {
         <Route path="dashboard" element={<Dashboard />}>
           <Route index element={<ClassList />} /> {/* Default route */}
           <Route path=":classId" element={<Class />} /> {/* Dynamic route */}
-          <Route path=":classId/:taskId" element={<ViewAllSubmissions />} /> 
+          <Route path=":classId/:taskId" element={<ViewAllSubmissions />} />
         </Route>
       </Route>
     </Routes>

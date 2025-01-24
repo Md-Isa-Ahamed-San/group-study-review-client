@@ -1,3 +1,4 @@
+/* eslint-disable react/prop-types */
 import { Search, Star, UserRoundCog, User } from "lucide-react";
 
 const ClassMembers = ({ members, experts, admins, classCode }) => {
@@ -5,8 +6,7 @@ const ClassMembers = ({ members, experts, admins, classCode }) => {
     navigator.clipboard.writeText(classCode);
     alert("Class code copied to clipboard!");
   };
-
-  const adminsList = admins.map((admin) => admin.email);
+  const adminsList = admins?.map((admin) => admin.email);
 
   return (
     <div className="px-4 sm:px-6 lg:px-8 max-w-4xl mx-auto">
@@ -34,7 +34,7 @@ const ClassMembers = ({ members, experts, admins, classCode }) => {
           <div className="space-y-4 max-h-40 overflow-y-auto scrollbar-thin scrollbar-thumb-gray-700 scrollbar-track-gray-900">
             {experts?.map((member) => (
               <div
-                key={member.id}
+                key={member._id}
                 className="flex items-center space-x-4 p-3 bg-gray-800 hover:bg-gray-700 rounded-lg shadow-md transition duration-300"
               >
                 {member?.profile_picture ? (

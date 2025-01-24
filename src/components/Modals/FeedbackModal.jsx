@@ -8,12 +8,12 @@ const FeedbackModal = ({ isOpen, onClose, submissionId }) => {
   const [feedbacks, setFeedbacks] = useState([]);
   const [newFeedback, setNewFeedback] = useState("");
   const { useFetchFeedbacks } = useTask();
-
+// console.log("submission id inside feedbackmodal: ",submissionId)
   const {
     data: fetchedFeedbacks,
     error,
     isLoading,
-  } = useFetchFeedbacks(submissionId);
+  } = useFetchFeedbacks({submissionId});
   // const { mutate: postFeedback } = usePostFeedbacks();
   console.log("fetchedFeedbacks: ", fetchedFeedbacks);
   useEffect(() => {
@@ -48,7 +48,7 @@ const FeedbackModal = ({ isOpen, onClose, submissionId }) => {
       isOpen={isOpen}
       onRequestClose={onClose}
       contentLabel="Feedback Modal"
-      className="fixed inset-0 flex items-center justify-center"
+      className="fixed inset-0 flex items-center justify-center z-100 absolute"
       overlayClassName="fixed inset-0 bg-black bg-opacity-50"
     >
       <div className="bg-[#1F2A40] rounded-lg p-6 w-full max-w-lg max-h-[80vh] overflow-y-auto">
@@ -64,10 +64,10 @@ const FeedbackModal = ({ isOpen, onClose, submissionId }) => {
               key={feedback._id}
               className="bg-[#141B2D] p-3 rounded-lg text-white"
             >
-              <p className="text-sm">{feedback.content}</p>
+              <p className="text-sm">{feedback?.content}</p>
               <p className="text-xs text-gray-400 mt-1">
-                By {feedback.user.username} on{" "}
-                {new Date(feedback.created_at).toLocaleString()}
+                By {feedback?.user?.username} on{" "}
+                {new Date(feedback?.created_at).toLocaleString()}
               </p>
             </div>
           ))}
