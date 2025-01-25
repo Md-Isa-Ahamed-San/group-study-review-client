@@ -11,12 +11,15 @@ import {
   signOut,
   updateProfile,
 } from "firebase/auth";
+import useAxios from "../hooks/useAxios";
 
 const AuthProvider = ({ children }) => {
-  const [user, setUser] = useState(null);//firebase user details
+  const [user, setUser] = useState(null); //firebase user details
+  const [userData, setUserData] = useState({}); //mongodb user details
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-
+  const { api } = useAxios();
+  console.log("user on firebase: ", user);
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
       setUser(currentUser);
@@ -26,16 +29,22 @@ const AuthProvider = ({ children }) => {
     return () => unsubscribe();
   }, []);
 
-  const { data: userData, isLoading: userDataLoading, error: userDataError } = useQuery({
+  const {
+    data,
+    isLoading: userDataLoading,
+    error: userDataError,
+  } = useQuery({
     queryKey: ["user", user?.email],
     queryFn: async () => {
-      const { data } = await axios.get(`${import.meta.env.VITE_BASE_URL}/user/${user?.email}`);
+      const { data } = await axios.get(
+        `${import.meta.env.VITE_BASE_URL}/user/${user?.email}`
+      );
       console.log("user on mongo: ", data);
+      setUserData(data);
       return data;
     },
     enabled: !!user?.email, // Fetch only if email exists
   });
-  
 
   const signUp = async (email, password) => {
     setError(null);
@@ -56,14 +65,16 @@ const AuthProvider = ({ children }) => {
 
   const logout = async () => {
     setError(null);
+    setUserData({});
     return signOut(auth);
   };
 
   return (
     <AuthContext.Provider
       value={{
-        user,//firebase user details
-        userData,//mongodb user details
+        user, //firebase user details
+        userData, //mongodb user details
+        setUserData,
         loading: loading || userDataLoading,
         error: error || userDataError,
         signUp,
@@ -78,6 +89,3 @@ const AuthProvider = ({ children }) => {
 };
 
 export default AuthProvider;
-
-
-

@@ -3,12 +3,14 @@ import axios from "axios";
 import { useState } from "react";
 import { ClassContext } from "../contexts";
 import useAuth from "../hooks/useAuth";
+import useAxios from "../hooks/useAxios";
 const ClassProvider = ({ children }) => {
   const { user } = useAuth();
   const [toggleClassCreateModal, setToggleClassCreateModal] = useState(false);
   const [toggleJoinClassModal, setToggleJoinClassModal] = useState(false);
+  const {api} = useAxios()
   const fetchClasses = async () => {
-    const { data } = await axios.get(
+    const { data } = await api.get(
       `${import.meta.env.VITE_BASE_URL}/classes/user/${user?.email}`
     );
     return data;
@@ -21,7 +23,7 @@ const ClassProvider = ({ children }) => {
     });
 
   const createClass = async (class_name, description, created_by) => {
-    const { data } = await axios.post(
+    const { data } = await api.post(
       `${import.meta.env.VITE_BASE_URL}/classes`,
       {
         class_name,

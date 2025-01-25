@@ -19,7 +19,7 @@ export default function ClassList() {
       {classes.length === 0 ? (
         <EmptyState message="No classes available." />
       ) : (
-        <div className="flex gap-8 px-6 py-8">
+        <div className="flex gap-8 px-6 py-8 flex-wrap">
           {classes.map((classItem) => (
             <div
               key={classItem._id}

@@ -25,7 +25,7 @@ const ClassCreateModal = ({ setToggleClassCreateModal }) => {
       {
         class_name: data.className,
         description: data.description,
-        created_by: userData._id, // Replace with the current user's ID or appropriate value
+        created_by: userData.user._id,
       },
       {
         onSuccess: () => {
