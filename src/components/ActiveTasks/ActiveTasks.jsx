@@ -10,7 +10,7 @@ const ActiveTasks = ({ tasks }) => {
   const [selectedTask, setSelectedTask] = useState(null); // Track selected task
   const { userData } = useAuth(); // Get the current user's data
   const { setToggleCreateTaskModal } = useTask();
-  const userId = userData?._id;
+  const userId = userData?.user._id;
   console.log("active tasks: ", tasks);
   const isSubmittedByCurrentUser = (task) => {
     return task.submissions.some((submission) => submission.userId === userId);

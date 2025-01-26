@@ -19,6 +19,7 @@ export default function TaskModal({ class_id, uniqueKey }) {
   const { api } = useAxios();
   const queryClient = useQueryClient();
   const createTaskMutation = useCreateTask();
+  const [isCreating,setIsCreating] = useState(false)
 
   const handleFileChange = (e) => {
     const selectedFile = e.target.files?.[0];
@@ -37,6 +38,7 @@ export default function TaskModal({ class_id, uniqueKey }) {
   };
 
   const onSubmit = async (data) => {
+    setIsCreating(true)
     try {
       if (file) {
         const uploadedFileUrl = await uploadToCloudinary(file, uploadPreset, cloudName);
@@ -56,6 +58,9 @@ export default function TaskModal({ class_id, uniqueKey }) {
     } catch (error) {
       toast.error("Failed to submit the task. Please try again.");
       console.error("Error during task creation:", error);
+    }
+    finally{
+      setIsCreating(false)
     }
   };
 
@@ -193,7 +198,10 @@ export default function TaskModal({ class_id, uniqueKey }) {
                   type="submit"
                   className="px-4 py-2 rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700"
                 >
-                  Create Assignment
+                  {
+                    isCreating? "Creating Assignment..." :'Create Assignment'
+                  }
+                  
                 </button>
               </div>
             </form>

@@ -1,9 +1,11 @@
+/* eslint-disable react/prop-types */
 import ReactDOM from "react-dom";
 import { useForm } from "react-hook-form";
 import useTask from "../../hooks/useTask";
 import { uploadToCloudinary } from "../../utils";
 
 import { useQueryClient } from "@tanstack/react-query";
+import { useState } from "react";
 import useAuth from "../../hooks/useAuth";
 
 const TaskSubmissionModal = ({ task, onClose, isSubmittedByCurrentUser }) => {
@@ -14,14 +16,14 @@ const TaskSubmissionModal = ({ task, onClose, isSubmittedByCurrentUser }) => {
   const { register, handleSubmit, reset } = useForm();
   const { useSubmitTask, useUpdateSubmitTask } = useTask();
   const { userData } = useAuth();
-  // console.log("user Data: ", userData);
-  const res = task.submissions.filter((item) => item.userId === userData.user._id);
+  const res = task?.submissions?.filter((item) => item.userId === userData.user._id);
   const submissionId = res[0]?._id;
-  console.log("🚀 ~ TaskSubmissionModal ~ submissionId:", submissionId);
-  console.log("🚀 ~ TaskSubmissionModal ~ userData:", userData);
+
   const submitTaskMutation = useSubmitTask();
   const updateTaskMutation = useUpdateSubmitTask();
   const queryClient = useQueryClient();
+
+  const [loading, setLoading] = useState(false); // New loading state
 
   const handleFormSubmit = async (data) => {
     if (!data.file?.[0] || data.file[0].type !== "application/pdf") {
@@ -29,12 +31,15 @@ const TaskSubmissionModal = ({ task, onClose, isSubmittedByCurrentUser }) => {
       return;
     }
 
+    setLoading(true); // Set loading state to true when submission starts
+
     try {
       const uploadPreset = import.meta.env.VITE_CLOUDINARY_PRESET;
       const cloudName = import.meta.env.VITE_CLOUD_NAME;
 
       if (!uploadPreset || !cloudName) {
         alert("Cloudinary configuration is missing.");
+        setLoading(false);
         return;
       }
 
@@ -50,10 +55,8 @@ const TaskSubmissionModal = ({ task, onClose, isSubmittedByCurrentUser }) => {
         document: documentUrl,
       };
 
-      // If the user is updating a task, call updateTaskMutation, otherwise call submitTaskMutation
       if (submitOrUpdate) {
         // Call update mutation
-        console.log(submissionId, documentUrl);
         updateTaskMutation.mutate(
           {
             submission_id: submissionId,
@@ -63,13 +66,15 @@ const TaskSubmissionModal = ({ task, onClose, isSubmittedByCurrentUser }) => {
           },
           {
             onSuccess: () => {
-              reset({ file: null }); // Reset the form
+              reset({ file: null });
               onClose();
               queryClient.invalidateQueries(["classes", task.class_id]);
+              setLoading(false); // Reset loading state
             },
             onError: (error) => {
               console.error("Update error:", error);
               alert("Failed to update the task. Please try again.");
+              setLoading(false);
             },
           }
         );
@@ -77,19 +82,22 @@ const TaskSubmissionModal = ({ task, onClose, isSubmittedByCurrentUser }) => {
         // Call submit mutation
         submitTaskMutation.mutate(submissionData, {
           onSuccess: () => {
-            reset({ file: null }); // Reset the form
+            reset({ file: null });
             onClose();
             queryClient.invalidateQueries(["classes", task.class_id]);
+            setLoading(false);
           },
           onError: (error) => {
             console.error("Submission error:", error);
             alert("Failed to submit the task. Please try again.");
+            setLoading(false);
           },
         });
       }
     } catch (error) {
       console.error("Error uploading file:", error);
       alert("Failed to upload the file. Please try again.");
+      setLoading(false);
     }
   };
 
@@ -145,8 +153,9 @@ const TaskSubmissionModal = ({ task, onClose, isSubmittedByCurrentUser }) => {
             <button
               type="submit"
               className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition duration-300"
+              disabled={loading}
             >
-              {submitOrUpdate ? <p>Update</p> : <p>Submit</p>}
+              {loading ? "Processing..." : submitOrUpdate ? "Update" : "Submit"}
             </button>
           </div>
         </form>
