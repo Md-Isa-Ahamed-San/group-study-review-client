@@ -3,16 +3,19 @@ import axios from "axios";
 import { useState } from "react";
 import { TaskContext } from "../contexts";
 import useAuth from "../hooks/useAuth";
+import useAxios from "../hooks/useAxios";
 const BASE_URL = import.meta.env.VITE_BASE_URL || "http://localhost:5000/api";
 const TaskProvider = ({ children }) => {
   // Function to fetch classes by ID
   const [toggleCreateTaskModal, setToggleCreateTaskModal] = useState(false);
   const [selectedSubmissionId, setSelectedSubmissionId] = useState(null);
   const { userData } = useAuth();
+  const { api } = useAxios();
+  console.log("userData: ",userData)
   const fetchClassesById = async (id) => {
     // console.log("id in task provider: ",id)
-    const { data } = await axios.get(
-      `${import.meta.env.VITE_BASE_URL}/classes/${id}?userId=${userData._id}`
+    const { data } = await api.get(
+      `${import.meta.env.VITE_BASE_URL}/classes/${id}?userId=${userData.user._id}`
     );
     return data;
   };
@@ -26,8 +29,30 @@ const TaskProvider = ({ children }) => {
       enabled: !!id, // Ensures the query doesn't run if id is falsy
     });
   };
+  const createTask = async (data) => {
+    try {
+      const response = await api.post(
+        `${import.meta.env.VITE_BASE_URL}/task`,
+        data
+      );
+      // Return the full response object or just the data depending on your needs
+      return response; // If you need status and metadata
+      // return response.data; // If you only care about the response body
+    } catch (error) {
+      console.error("Error in createTask:", error);
+      throw error; // Throw the error to be caught by the mutation
+    }
+  };
+  
+  // Define the mutation hook
+  const useCreateTask = () =>
+    useMutation({
+      mutationFn: (data) => createTask(data), // Pass the API call function
+    });
+  
+
   const submitTask = async ({ task_id, userId, document }) => {
-    const { data } = await axios.post(`${BASE_URL}/submissions`, {
+    const { data } = await api.post(`${BASE_URL}/submissions`, {
       task_id,
       userId,
       document,
@@ -49,7 +74,7 @@ const TaskProvider = ({ children }) => {
     taskId,
   }) => {
     try {
-      const response = await axios.patch(
+      const response = await api.patch(
         `${import.meta.env.VITE_BASE_URL}/submissions`,
         {
           document,
@@ -75,7 +100,7 @@ const TaskProvider = ({ children }) => {
   };
 
   const getAllSubmissions = async (taskId) => {
-    const { data } = await axios.get(`${BASE_URL}/submissions/${taskId}`);
+    const { data } = await api.get(`${BASE_URL}/submissions/${taskId}`);
     return data;
   };
 
@@ -88,7 +113,7 @@ const TaskProvider = ({ children }) => {
 
   const upvoteToggle = async ({ submissionId, userType, userId }) => {
     try {
-      const response = await axios.patch(`${BASE_URL}/submissions/upvote`, {
+      const response = await api.patch(`${BASE_URL}/submissions/upvote`, {
         submissionId,
         userType,
         userId,
@@ -115,7 +140,7 @@ const TaskProvider = ({ children }) => {
   const fetchFeedbacks = async (submissionId) => {
     console.log("submission id: ", submissionId);
     if (!submissionId) throw new Error("Submission ID is required");
-    const { data } = await axios.get(`${BASE_URL}/feedbacks`, {
+    const { data } = await api.get(`${BASE_URL}/feedbacks`, {
       params: { submissionId },
     });
     return data;
@@ -132,7 +157,7 @@ const TaskProvider = ({ children }) => {
     if (!submissionId || !content || !user_id)
       throw new Error("Submission ID and content are required");
 
-    const { data } = await axios.post(`${BASE_URL}/feedbacks`, {
+    const { data } = await api.post(`${BASE_URL}/feedbacks`, {
       submission_id: submissionId,
       content,
       user_id,
@@ -150,6 +175,7 @@ const TaskProvider = ({ children }) => {
         toggleCreateTaskModal,
         setToggleCreateTaskModal,
         useFetchClassesById,
+        useCreateTask,
         useSubmitTask,
         useGetAllSubmissions,
         useUpdateSubmitTask,

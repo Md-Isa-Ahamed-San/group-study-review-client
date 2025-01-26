@@ -1,19 +1,11 @@
-import {
-  ArrowUpDown,
-  CircleUserRound,
-  FileText,
-  Star,
-  ThumbsUp,
-  X,
-} from "lucide-react";
 import { useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
-import { Document, Page, pdfjs } from "react-pdf";
+import { pdfjs } from "react-pdf";
 import { useLocation, useParams } from "react-router-dom";
-import useTask from "../../hooks/useTask";
+import FeedbackModal from "../../components/Modals/FeedbackModal";
 import SubmissionCard from "../../components/SubmissionCard/SubmissionCard";
 import useAuth from "../../hooks/useAuth";
-import FeedbackModal from "../../components/Modals/FeedbackModal";
+import useTask from "../../hooks/useTask";
 
 // Initialize pdfjs worker
 pdfjs.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.min.js`;
@@ -49,12 +41,12 @@ export default function ViewAllSubmissions() {
   const closeModal = () => setIsModalOpen(false);
   const verifyUserType = () => {
     if (
-      classData?.data?.experts?.some((expert) => expert._id === userData._id)
+      classData?.data?.experts?.some((expert) => expert._id === userData.user._id)
     ) {
       return "experts";
     }
     if (
-      classData?.data?.members?.some((member) => member._id === userData._id)
+      classData?.data?.members?.some((member) => member._id === userData.user._id)
     ) {
       return "members";
     }
@@ -70,7 +62,7 @@ export default function ViewAllSubmissions() {
     }
 
     console.log(
-      `Upvote: ${submissionId}, Type: ${userType}, UserId: ${userData._id}`
+      `Upvote: ${submissionId}, Type: ${userType}, UserId: ${userData.user._id}`
     );
 
     // Call mutation with the required data
@@ -78,7 +70,7 @@ export default function ViewAllSubmissions() {
       {
         submissionId,
         userType,
-        userId: userData._id,
+        userId: userData.user._id,
       },
       {
         onSuccess: () => {

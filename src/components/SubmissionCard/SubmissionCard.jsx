@@ -1,10 +1,10 @@
 /* eslint-disable react/prop-types */
 import {
-  CircleUserRound,
-  FileText,
-  MessageSquare,
-  Star,
-  ThumbsUp,
+    CircleUserRound,
+    FileText,
+    MessageSquare,
+    Star,
+    ThumbsUp,
 } from "lucide-react";
 import useAuth from "../../hooks/useAuth";
 import useTask from "../../hooks/useTask";
@@ -25,13 +25,13 @@ const SubmissionCard = ({
   const alreadyUpvoted = (type) => {
     if (
       type === "members" &&
-      submission?.user_upvotes?.includes(userData._id)
+      submission?.user_upvotes?.includes(userData.user._id)
     ) {
       return true;
     }
     if (
       type === "experts" &&
-      submission?.expert_upvotes?.includes(userData._id)
+      submission?.expert_upvotes?.includes(userData.user._id)
     ) {
       return true;
     }

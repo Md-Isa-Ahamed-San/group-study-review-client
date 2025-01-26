@@ -1,11 +1,11 @@
 /* eslint-disable react/prop-types */
-import Modal from "react-modal";
-import { X } from "lucide-react";
-import { ClipLoader } from "react-spinners"; // Spinner for loading state
-import useTask from "../../hooks/useTask";
-import useAuth from "../../hooks/useAuth";
 import { useQueryClient } from "@tanstack/react-query"; // For query invalidation
+import { X } from "lucide-react";
 import { useState } from "react";
+import Modal from "react-modal";
+import { ClipLoader } from "react-spinners"; // Spinner for loading state
+import useAuth from "../../hooks/useAuth";
+import useTask from "../../hooks/useTask";
 
 Modal.setAppElement("#root"); // Ensures accessibility by tying modal to the root element
 
@@ -36,7 +36,7 @@ const FeedbackModal = ({ isOpen, onClose, submissionId }) => {
       await postFeedback.mutateAsync({
         submissionId,
         content: newFeedback,
-        user_id: userData._id,
+        user_id: userData.user._id,
       });
 
       // Invalidate the feedbacks query to fetch updated data
@@ -78,8 +78,9 @@ const FeedbackModal = ({ isOpen, onClose, submissionId }) => {
           <div className="space-y-4 mb-4 max-h-80 overflow-auto">
             {/* Render Feedbacks */}
             {fetchedFeedbacks?.length > 0 ? (
-              fetchedFeedbacks.map((feedback) => (
+              fetchedFeedbacks.map((feedback,idx) => (
                 <div
+                  // key={idx}
                   key={feedback._id}
                   className="bg-[#141B2D] p-3 rounded-lg text-white"
                 >

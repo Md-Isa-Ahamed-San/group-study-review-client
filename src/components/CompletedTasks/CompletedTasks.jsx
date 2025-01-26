@@ -24,9 +24,10 @@ const CompletedTasks = ({ tasks }) => {
           <Star className="h-5 w-5 text-yellow-400" />
         </button>
       </div>
-      {tasks?.map((assignment) => (
+      {tasks?.map((assignment,idx) => (
         <Link
           key={assignment._id}
+          // key={idx}
           to={`/dashboard/${assignment.class_id}/${assignment._id}`}
           state={{ assignment }}
         >

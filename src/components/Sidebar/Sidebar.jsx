@@ -46,8 +46,11 @@ const Sidebar = ({
               My Classes
             </h3>
             <ul className="space-y-2">
-              {classList?.data?.map((classItem) => (
-                <Link key={classItem._id} to={`/dashboard/${classItem._id}`}>
+              {classList?.data?.map((classItem,idx) => (
+                <Link 
+                // key={idx}
+                key={classItem._id}
+                 to={`/dashboard/${classItem._id}`}>
                   <li
                     // Assuming each class item has a unique `_id`
                     className="py-2 my-2 px-4 text-center bg-gray-700 rounded-md hover:bg-gray-600 transition duration-300"

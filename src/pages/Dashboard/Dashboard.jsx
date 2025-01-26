@@ -10,18 +10,19 @@ import useClass from "../../hooks/useClass";
 import useTask from "../../hooks/useTask";
 import { useParams } from "react-router-dom";
 export default function Dashboard() {
-  const [isSidebarOpen, setIsSidebarOpen] = useState(true);
+  
   const {
     toggleJoinClassModal,
     setToggleJoinClassModal,
     toggleClassCreateModal,
     setToggleClassCreateModal,
   } = useClass();
+  const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const { toggleCreateTaskModal } = useTask();
   const { user } = useAuth();
 
   // Fetch usersClasslist using React Query
-  const { id } = useParams();
+  const { classId } = useParams();
 
   return (
     <>
@@ -48,11 +49,11 @@ export default function Dashboard() {
               />
             </div>
           ) : null}
-          {toggleCreateTaskModal ? (
+          {toggleCreateTaskModal &&
             <div className="absolute">
-              <TaskModal class_id={id} />
+              <TaskModal key={new Date()} class_id={classId} />
             </div>
-          ) : null}
+          }
         </div>
       </div>
     </>

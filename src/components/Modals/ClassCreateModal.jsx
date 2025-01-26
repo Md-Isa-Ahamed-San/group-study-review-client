@@ -1,9 +1,9 @@
+import { useQueryClient } from "@tanstack/react-query";
 import { AnimatePresence, motion } from "framer-motion";
 import { X } from "lucide-react";
 import { useForm } from "react-hook-form";
-import useClass from "../../hooks/useClass";
 import useAuth from "../../hooks/useAuth";
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import useClass from "../../hooks/useClass";
 const ClassCreateModal = ({ setToggleClassCreateModal }) => {
   const {
     register,
@@ -13,7 +13,7 @@ const ClassCreateModal = ({ setToggleClassCreateModal }) => {
   } = useForm();
   const { userData } = useAuth();
   const queryClient = useQueryClient();
-  // console.log("user data inside classcreate modal: ",userData._id)
+  // console.log("user data inside classcreate modal: ",userData.user._id)
   const { useCreateClass } = useClass();
   const createClassMutation = useCreateClass(); // Get the mutation function
 

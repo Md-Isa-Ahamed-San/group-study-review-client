@@ -1,8 +1,8 @@
 /* eslint-disable react/prop-types */
+import { useQueryClient } from "@tanstack/react-query";
 import { AnimatePresence, motion } from "framer-motion";
 import { X } from "lucide-react";
 import { useState } from "react";
-import { useQueryClient } from "@tanstack/react-query";
 import useAuth from "../../hooks/useAuth";
 import useClass from "../../hooks/useClass";
 
@@ -22,7 +22,7 @@ const JoinClassModal = ({ setToggleJoinClassModal }) => {
     }
 
     joinClassMutation.mutate(
-      { _id: userData._id, classCode },
+      { _id: userData.user._id, classCode },
       {
         onSuccess: () => {
           // Refetch the class data

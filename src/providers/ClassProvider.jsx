@@ -41,7 +41,7 @@ const ClassProvider = ({ children }) => {
 
   const joinClass = async (_id, classCode) => {
     try {
-      const response = await axios.post(
+      const response = await api.post(
         `${import.meta.env.VITE_BASE_URL}/classes/join`,
         {
           class_code: classCode,
