@@ -8,7 +8,7 @@ const ClassProvider = ({ children }) => {
   const { user } = useAuth();
   const [toggleClassCreateModal, setToggleClassCreateModal] = useState(false);
   const [toggleJoinClassModal, setToggleJoinClassModal] = useState(false);
-  const {api} = useAxios()
+  const { api } = useAxios();
   const fetchClasses = async () => {
     const { data } = await api.get(
       `${import.meta.env.VITE_BASE_URL}/classes/user/${user?.email}`
@@ -38,6 +38,17 @@ const ClassProvider = ({ children }) => {
       mutationFn: ({ class_name, description, created_by }) =>
         createClass(class_name, description, created_by),
     });
+  const deleteClass = async (classId) => {
+    const { data } = await api.delete(
+      `${import.meta.env.VITE_BASE_URL}/classes/${classId}`
+    );
+    return data;
+  };
+  const useDeleteClass = () => 
+    useMutation({
+      mutationFn: (classId) => deleteClass(classId),
+    });
+  
 
   const joinClass = async (_id, classCode) => {
     try {
@@ -59,23 +70,22 @@ const ClassProvider = ({ children }) => {
       mutationFn: ({ _id, classCode }) => joinClass(_id, classCode),
     });
 
-    const fetchFeedbacks = async (email) => {
-      if (!email) throw new Error("User email is required");
-      const response = await fetch(`/api/feedbacks?email=${email}`);
-      if (!response.ok) {
-        throw new Error("Failed to fetch feedbacks");
-      }
-      return response.json();
-    };
-    
-    const useFetchFeedbacks = (user) => {
-      return useQuery({
-        queryKey: ["feedbacks", user?.email],
-        queryFn: () => fetchFeedbacks(user?.email),
-        enabled: !!user?.email, // Only run the query if user email exists
-      });
-    };
-    
+  const fetchFeedbacks = async (email) => {
+    if (!email) throw new Error("User email is required");
+    const response = await fetch(`/api/feedbacks?email=${email}`);
+    if (!response.ok) {
+      throw new Error("Failed to fetch feedbacks");
+    }
+    return response.json();
+  };
+
+  const useFetchFeedbacks = (user) => {
+    return useQuery({
+      queryKey: ["feedbacks", user?.email],
+      queryFn: () => fetchFeedbacks(user?.email),
+      enabled: !!user?.email, // Only run the query if user email exists
+    });
+  };
 
   return (
     <ClassContext.Provider
@@ -85,6 +95,7 @@ const ClassProvider = ({ children }) => {
         toggleClassCreateModal,
         setToggleClassCreateModal,
         useCreateClass,
+        useDeleteClass,
         useFetchClasses,
         useJoinClass,
       }}

@@ -6,6 +6,7 @@ import FeedbackModal from "../../components/Modals/FeedbackModal";
 import SubmissionCard from "../../components/SubmissionCard/SubmissionCard";
 import useAuth from "../../hooks/useAuth";
 import useTask from "../../hooks/useTask";
+import Loading from "../../shared/Loading/Loading";
 
 // Initialize pdfjs worker
 pdfjs.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.min.js`;
@@ -100,7 +101,7 @@ export default function ViewAllSubmissions() {
           {assignment?.title || "Submissions"}
         </h1>
         {submissionResponseLoading || classDataLoading ? (
-          <p>Loading...</p>
+          <p className="p-4">Loading...</p>
         ) : isError ? (
           <p>Error loading submissions.</p>
         ) : (

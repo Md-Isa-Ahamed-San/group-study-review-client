@@ -1,4 +1,4 @@
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import axios from "axios";
 import { useState } from "react";
 import { TaskContext } from "../contexts";
@@ -11,12 +11,15 @@ const TaskProvider = ({ children }) => {
   const [selectedSubmissionId, setSelectedSubmissionId] = useState(null);
   const { userData } = useAuth();
   const { api } = useAxios();
-  console.log("userData: ",userData)
+  console.log("userData: ", userData);
   const fetchClassesById = async (id) => {
     // console.log("id in task provider: ",id)
     const { data } = await api.get(
-      `${import.meta.env.VITE_BASE_URL}/classes/${id}?userId=${userData.user._id}`
+      `${import.meta.env.VITE_BASE_URL}/classes/${id}?userId=${
+        userData.user._id
+      }`
     );
+    // console.log(" fetchClassesById: ",data)
     return data;
   };
 
@@ -43,13 +46,38 @@ const TaskProvider = ({ children }) => {
       throw error; // Throw the error to be caught by the mutation
     }
   };
-  
+
   // Define the mutation hook
   const useCreateTask = () =>
     useMutation({
       mutationFn: (data) => createTask(data), // Pass the API call function
     });
-  
+
+  const deleteTask = async (taskId) => {
+    try {
+      const response = await api.delete(
+        `${import.meta.env.VITE_BASE_URL}/task/${taskId}`
+      );
+      return response.data;
+    } catch (error) {
+      console.error("Error in delete task:", error);
+      throw error;
+    }
+  };
+
+  const useDeleteTask = () => {
+    const queryClient = useQueryClient();
+
+    return useMutation({
+      mutationFn: deleteTask,
+      onSuccess: () => {
+        queryClient.invalidateQueries("tasks");
+      },
+      onError: (error) => {
+        console.error("Failed to delete task:", error);
+      },
+    });
+  };
 
   const submitTask = async ({ task_id, userId, document }) => {
     const { data } = await api.post(`${BASE_URL}/submissions`, {
@@ -176,6 +204,7 @@ const TaskProvider = ({ children }) => {
         setToggleCreateTaskModal,
         useFetchClassesById,
         useCreateTask,
+        useDeleteTask,
         useSubmitTask,
         useGetAllSubmissions,
         useUpdateSubmitTask,

@@ -4,6 +4,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import useAuth from "../../hooks/useAuth";
 import useClass from "../../hooks/useClass";
 import { Link } from "react-router-dom";
+import Loading from "../../shared/Loading/Loading";
 const Sidebar = ({
   isSidebarOpen,
   setToggleClassCreateModal,
@@ -13,7 +14,7 @@ const Sidebar = ({
   const { useFetchClasses } = useClass();
   const { data: classList, isLoading, isError, error } = useFetchClasses();
   // console.log("class list inside sidebar: ", classList);
-  if (isLoading) return <p>Loading Class...</p>;
+  if (isLoading) return <p className="p-4 text-xl">Loading Sidebar...</p>;
   if (isError) return <p>Error: {error.message}</p>;
 
   // console.log("userdata: ", userData);

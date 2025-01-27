@@ -4,6 +4,7 @@ import CompletedTasks from "../CompletedTasks/CompletedTasks";
 import ClassMembers from "../ClassMembers/ClassMembers";
 import { useParams } from "react-router-dom";
 import useTask from "../../hooks/useTask";
+import Loading from "../../shared/Loading/Loading";
 
 const Class = ({ setToggleCreateTaskModal }) => {
   const { classId } = useParams(); // Get the class ID from the route params
@@ -25,7 +26,7 @@ const Class = ({ setToggleCreateTaskModal }) => {
   );
   // console.log("🚀 ~ Class ~ completedTasks:", completedTasks)
   console.log("classData: ",classData)
-  if (isLoading) return <p>Loading class details...</p>;
+  if (isLoading) return <Loading/>;
   if (isError) return <p>Error: {error.message}</p>;
 
   return (

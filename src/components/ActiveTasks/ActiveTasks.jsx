@@ -1,19 +1,86 @@
-/* eslint-disable react/prop-types */
 import { ArrowUpDown, Plus } from "lucide-react";
 import { useState } from "react";
-import ReactDOM from "react-dom"; // Update the path to your auth context
+import Swal from "sweetalert2";
+import { useQueryClient } from "@tanstack/react-query";
 import useAuth from "../../hooks/useAuth";
-import TaskSubmissionModal from "../Modals/TaskSubmissionModal";
 import useTask from "../../hooks/useTask";
+import TaskSubmissionModal from "../Modals/TaskSubmissionModal";
 
 const ActiveTasks = ({ tasks }) => {
   const [selectedTask, setSelectedTask] = useState(null); // Track selected task
   const { userData } = useAuth(); // Get the current user's data
-  const { setToggleCreateTaskModal } = useTask();
+  const { setToggleCreateTaskModal, useDeleteTask } = useTask();
+  const queryClient = useQueryClient(); // Get the query client instance
   const userId = userData?.user._id;
-  console.log("active tasks: ", tasks);
+
   const isSubmittedByCurrentUser = (task) => {
     return task.submissions.some((submission) => submission.userId === userId);
+  };
+
+  const deleteTaskMutation = useDeleteTask();
+  
+  const handleDelete = (taskId) => {
+    Swal.fire({
+      title: "Are you sure?",
+      text: "You won't be able to revert this!",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonText: `<span class="px-4 py-1 mr-2 rounded-md transition-all duration-300 bg-gradient-to-r from-red-600/20 to-red-700/20 border border-blue-500/50 text-blue-400">Yes, delete it!</span>`,
+      cancelButtonText: `<span class="px-4 py-1 rounded-md transition-all duration-300 bg-gradient-to-r from-gray-700/20 to-gray-800/20 border border-gray-500 text-gray-300">Cancel</span>`,
+      customClass: {
+        popup: "bg-gradient-to-b from-[#1F2A40] to-[#141B2D] text-white",
+        title: "text-blue-400",
+        text: "text-gray-300",
+      },
+      buttonsStyling: false,
+    }).then((result) => {
+      if (result.isConfirmed) {
+        deleteTaskMutation.mutateAsync(taskId).then((res) => {
+          console.log("ressssss: ",res)
+          if (res.success === true) {
+            Swal.fire({
+              title: "Deleted!",
+              text: "The task has been successfully deleted.",
+              icon: "success",
+              confirmButtonText: `<span class="px-4 py-1 rounded-md transition-all duration-300 bg-gradient-to-r from-blue-500/20 to-teal-500/20 border border-blue-500/50 text-blue-400">OK</span>`,
+              customClass: {
+                popup: "bg-gradient-to-b from-[#1F2A40] to-[#141B2D] text-white",
+                title: "text-blue-400",
+                text: "text-gray-300",
+              },
+              buttonsStyling: false,
+            });
+            queryClient.invalidateQueries(["classes"]);
+          } else {
+            Swal.fire({
+              title: "Delete Rejected!",
+              text: "The task could not be deleted. Please try again.",
+              icon: "error",
+              confirmButtonText: `<span class="px-4 py-1 rounded-md transition-all duration-300 bg-gradient-to-r from-red-500/20 to-red-700/20 border border-red-500/50 text-red-400">OK</span>`,
+              customClass: {
+                popup: "bg-gradient-to-b from-[#1F2A40] to-[#141B2D] text-white",
+                title: "text-red-400",
+                text: "text-gray-300",
+              },
+              buttonsStyling: false,
+            });
+          }
+        });
+      } else if (result.dismiss === Swal.DismissReason.cancel) {
+        Swal.fire({
+          title: "Cancelled",
+          text: "Your task is safe and not deleted.",
+          icon: "info",
+          confirmButtonText: `<span class="px-4 py-1 rounded-md transition-all duration-300 bg-gradient-to-r from-blue-500/20 to-teal-500/20 border border-blue-500/50 text-blue-400">OK</span>`,
+          customClass: {
+            popup: "bg-gradient-to-b from-[#1F2A40] to-[#141B2D] text-white",
+            title: "text-blue-400",
+            text: "text-gray-300",
+          },
+          buttonsStyling: false,
+        });
+      }
+    });
   };
 
   return (
@@ -25,11 +92,11 @@ const ActiveTasks = ({ tasks }) => {
           placeholder="Search active tasks..."
           className="flex-grow p-2 bg-gray-700 border border-gray-600 rounded-md text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-white"
         />
-        <button className="p-2 bg-gray-700 rounded-md hover:bg-gray-600 transition duration-300">
-          <Plus
-            onClick={() => setToggleCreateTaskModal(true)}
-            className="h-5 w-5 text-blue-500"
-          />
+        <button
+          onClick={() => setToggleCreateTaskModal(true)}
+          className="p-2 bg-gray-700 rounded-md hover:bg-gray-600 transition duration-300"
+        >
+          <Plus className="h-5 w-5 text-blue-500" />
         </button>
         <button className="p-2 bg-gray-700 rounded-md hover:bg-gray-600 transition duration-300">
           <ArrowUpDown className="h-5 w-5 text-blue-500" />
@@ -60,12 +127,23 @@ const ActiveTasks = ({ tasks }) => {
               >
                 {isSubmittedByCurrentUser(task) ? "Submitted" : "Not Submitted"}
               </span>
-              <button
-                onClick={() => setSelectedTask(task)} // Set the selected task
-                className="px-4 py-1 rounded-md transition-all duration-300 bg-gradient-to-r from-blue-500/20 to-teal-500/20 border border-blue-500/50 text-blue-400"
-              >
-                Details
-              </button>
+              <div className="flex gap-4">
+                {task?.created_by === userData?.user?._id && (
+                  <button
+                    onClick={() => handleDelete(task._id)}
+                    className="px-4 py-1 rounded-md transition-all duration-300 bg-gradient-to-r from-red-600/20 to-red-700-500/20 border border-blue-500/50 text-blue-400"
+                  >
+                    Delete
+                  </button>
+                )}
+
+                <button
+                  onClick={() => setSelectedTask(task)} // Set the selected task
+                  className="px-4 py-1 rounded-md transition-all duration-300 bg-gradient-to-r from-blue-500/20 to-teal-500/20 border border-blue-500/50 text-blue-400"
+                >
+                  Details
+                </button>
+              </div>
             </div>
           </div>
         ))
