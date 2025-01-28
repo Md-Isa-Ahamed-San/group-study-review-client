@@ -42,12 +42,12 @@ export default function ViewAllSubmissions() {
   const closeModal = () => setIsModalOpen(false);
   const verifyUserType = () => {
     if (
-      classData?.data?.experts?.some((expert) => expert._id === userData.user._id)
+      classData?.data?.experts?.some((expert) => expert?._id === userData?.user?._id)
     ) {
       return "experts";
     }
     if (
-      classData?.data?.members?.some((member) => member._id === userData.user._id)
+      classData?.data?.members?.some((member) => member?._id === userData?.user?._id)
     ) {
       return "members";
     }

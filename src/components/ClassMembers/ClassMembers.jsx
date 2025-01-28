@@ -1,12 +1,124 @@
 /* eslint-disable react/prop-types */
-import { Search, Star, UserRoundCog, User } from "lucide-react";
+import { useQueryClient } from "@tanstack/react-query";
+import {
+  ArrowDownCircle,
+  ArrowUpCircle,
+  Search,
+  User,
+  UserRoundCog
+} from "lucide-react";
+import { useParams } from "react-router-dom";
+import Swal from "sweetalert2";
+import useAuth from "../../hooks/useAuth";
+import useClass from "../../hooks/useClass";
+import useTask from "../../hooks/useTask";
 
-const ClassMembers = ({ members, experts, admins, classCode }) => {
+const ClassMembers = ({
+  members,
+  experts,
+  admins,
+  classCode,
+  onPromoteUser,
+}) => {
+  console.log("meac : ", members, experts, admins, classCode);
+  const { userData } = useAuth();
+  
+  const { useChangeRole } = useClass();
+  const changeRoleMutation = useChangeRole();
+  const queryClient = useQueryClient();
+  // Handle copy class code to clipboard
+  const { classId } = useParams(); // Get the class ID from the route params
+  const { useFetchClassesById } = useTask();
+  // console.log("id of class inside class :",id)
+  // Fetch class data using the ID
+  const {
+    data: classData,
+    isLoading,
+    isError,
+    error,
+  } = useFetchClassesById(classId);
   const handleCopyClassCode = () => {
     navigator.clipboard.writeText(classCode);
     alert("Class code copied to clipboard!");
   };
+
   const adminsList = admins?.map((admin) => admin.email);
+
+  const handlePromote = (userId,creator) => {
+    // Determine if the user is an expert or member
+    const isExpert = experts.some((expert) => expert._id === userId);
+
+    // Configure modal message
+    const action = isExpert ? "demote" : "promote";
+    const modalTitle = isExpert
+      ? "Demote the user?"
+      : "Promote the user to Expert?";
+    const modalText = isExpert
+      ? "This will remove the user from the Experts list."
+      : "This will add the user to the Experts list.";
+
+    // Show confirmation modal
+    Swal.fire({
+      title: modalTitle,
+      text: modalText,
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonText: `<span class="px-4 py-1 mr-2 rounded-md transition-all duration-300 bg-gradient-to-r ${
+        isExpert
+          ? "from-red-600/20 to-red-700/20 border border-red-500/50 text-red-400"
+          : "from-blue-600/20 to-blue-700/20 border border-blue-500/50 text-blue-400"
+      }">${isExpert ? "Yes, demote!" : "Yes, promote!"}</span>`,
+
+      cancelButtonText: `<span class="px-4 py-1 rounded-md transition-all duration-300 bg-gradient-to-r from-gray-700/20 to-gray-800/20 border border-gray-500 text-gray-300">Cancel</span>`,
+      customClass: {
+        popup: "bg-gradient-to-b bg-[#141B2D] text-white",
+        title: "text-blue-400",
+        text: "text-gray-300",
+      },
+      buttonsStyling: false,
+    }).then((result) => {
+      if (result.isConfirmed) {
+        // Execute promote/demote action
+        changeRoleMutation
+          .mutateAsync({ userId, classCode,creator})
+          .then((res) => {
+            console.log("res99999: ",res)
+            if (res.status===200) {
+              Swal.fire({
+                title: isExpert ? "Demoted!" : "Promoted!",
+                text: `The user has been successfully ${
+                  isExpert ? "demoted" : "promoted"
+                }.`,
+                icon: "success",
+                confirmButtonText: `<span class="px-4 py-1 mr-2 rounded-md transition-all duration-300 bg-gradient-to-r from-blue-500/20 to-teal-500/20 border border-blue-500/50 text-blue-400">OK</span>`,
+                customClass: {
+                  popup:
+                    "bg-gradient-to-b bg-[#141B2D] text-white",
+                  title: "text-blue-400",
+                  text: "text-gray-300",
+                },
+                buttonsStyling: false,
+              });
+              queryClient.invalidateQueries(["classes"]);
+            } else {
+              Swal.fire({
+                title: "Action Rejected!",
+                text: "The action could not be completed. Please try again.",
+                icon: "error",
+                confirmButtonText: `<span class="px-4 py-1 rounded-md transition-all duration-300 bg-gradient-to-r from-red-500/20 to-red-700/20 border border-red-500/50 text-red-400">OK</span>`,
+                customClass: {
+                  popup:
+                    "bg-gradient-to-b bg-[#141B2D] text-white",
+                  title: "text-red-400",
+                  text: "text-gray-300",
+                },
+                buttonsStyling: false,
+              });
+            }
+          });
+      }
+    });
+  };
 
   return (
     <div className="px-4 sm:px-6 lg:px-8 max-w-4xl mx-auto">
@@ -54,6 +166,12 @@ const ClassMembers = ({ members, experts, admins, classCode }) => {
                     <p className="text-sm text-gray-400">Admin</p>
                   )}
                 </div>
+                <button
+                  onClick={() => handlePromote(member?._id,classData?.data?.created_by)}
+                  className="ml-auto text-blue-500 hover:text-blue-400"
+                >
+                  <ArrowDownCircle className="w-6 h-6" />
+                </button>
               </div>
             ))}
           </div>
@@ -85,6 +203,12 @@ const ClassMembers = ({ members, experts, admins, classCode }) => {
                     <p className="text-sm text-gray-400">Admin</p>
                   )}
                 </div>
+                <button
+                  onClick={() => handlePromote(member._id,classData?.data?.created_by)}
+                  className="ml-auto text-blue-500 hover:text-blue-400"
+                >
+                  <ArrowUpCircle className="w-6 h-6" />
+                </button>
               </div>
             ))}
           </div>

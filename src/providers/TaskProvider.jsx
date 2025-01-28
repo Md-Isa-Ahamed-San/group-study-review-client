@@ -1,3 +1,4 @@
+/* eslint-disable react/prop-types */
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import axios from "axios";
 import { useState } from "react";
@@ -47,10 +48,9 @@ const TaskProvider = ({ children }) => {
     }
   };
 
-  // Define the mutation hook
   const useCreateTask = () =>
     useMutation({
-      mutationFn: (data) => createTask(data), // Pass the API call function
+      mutationFn: (data) => createTask(data),
     });
 
   const deleteTask = async (taskId) => {
@@ -134,9 +134,9 @@ const TaskProvider = ({ children }) => {
 
   const useGetAllSubmissions = (taskId) =>
     useQuery({
-      queryKey: ["submissions", taskId], // Include userId in the query key
+      queryKey: ["submissions", taskId],
       queryFn: () => getAllSubmissions(taskId),
-      enabled: !!taskId, // Ensure query runs only when both are truthy
+      enabled: !!taskId,
     });
 
   const upvoteToggle = async ({ submissionId, userType, userId }) => {
@@ -147,7 +147,7 @@ const TaskProvider = ({ children }) => {
         userId,
       });
 
-      return response.data; // Axios directly provides the data property from the response
+      return response.data;
     } catch (error) {
       console.error("Error toggling upvote:", error);
 

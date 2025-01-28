@@ -44,11 +44,10 @@ const ClassProvider = ({ children }) => {
     );
     return data;
   };
-  const useDeleteClass = () => 
+  const useDeleteClass = () =>
     useMutation({
       mutationFn: (classId) => deleteClass(classId),
     });
-  
 
   const joinClass = async (_id, classCode) => {
     try {
@@ -87,6 +86,28 @@ const ClassProvider = ({ children }) => {
     });
   };
 
+  const changeRole = async ({ userId, classCode,creator }) => {
+    console.log("changeRole: ",userId, classCode);
+    try {
+      const response = await api.patch(
+        `${import.meta.env.VITE_BASE_URL}/classes/${classCode}/change-role`,
+        {
+          userId,
+          creator
+        }
+      );
+      console.log("response in changeRole: ", response);
+      return response;
+    } catch (error) {
+      throw new Error(error.response?.data?.message || "Failed to join class");
+    }
+  };
+
+  const useChangeRole = () =>
+    useMutation({
+      mutationFn: ({ userId, classCode,creator }) => changeRole({ userId, classCode,creator }),
+    });
+
   return (
     <ClassContext.Provider
       value={{
@@ -98,6 +119,7 @@ const ClassProvider = ({ children }) => {
         useDeleteClass,
         useFetchClasses,
         useJoinClass,
+        useChangeRole,
       }}
     >
       {children}

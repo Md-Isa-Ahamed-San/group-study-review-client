@@ -7,11 +7,11 @@ import useTask from "../../hooks/useTask";
 import TaskSubmissionModal from "../Modals/TaskSubmissionModal";
 
 const ActiveTasks = ({ tasks }) => {
-  const [selectedTask, setSelectedTask] = useState(null); // Track selected task
-  const { userData } = useAuth(); // Get the current user's data
+  const [selectedTask, setSelectedTask] = useState(null);
+  const { userData } = useAuth();
   const { setToggleCreateTaskModal, useDeleteTask } = useTask();
-  const queryClient = useQueryClient(); // Get the query client instance
-  const userId = userData?.user._id;
+  const queryClient = useQueryClient();
+  const userId = userData?.user?._id;
 
   const isSubmittedByCurrentUser = (task) => {
     return task.submissions.some((submission) => submission.userId === userId);
@@ -44,7 +44,7 @@ const ActiveTasks = ({ tasks }) => {
               icon: "success",
               confirmButtonText: `<span class="px-4 py-1 rounded-md transition-all duration-300 bg-gradient-to-r from-blue-500/20 to-teal-500/20 border border-blue-500/50 text-blue-400">OK</span>`,
               customClass: {
-                popup: "bg-gradient-to-b from-[#1F2A40] to-[#141B2D] text-white",
+                popup: "bg-gradient-to-b bg-[#141B2D] text-white",
                 title: "text-blue-400",
                 text: "text-gray-300",
               },
@@ -58,7 +58,7 @@ const ActiveTasks = ({ tasks }) => {
               icon: "error",
               confirmButtonText: `<span class="px-4 py-1 rounded-md transition-all duration-300 bg-gradient-to-r from-red-500/20 to-red-700/20 border border-red-500/50 text-red-400">OK</span>`,
               customClass: {
-                popup: "bg-gradient-to-b from-[#1F2A40] to-[#141B2D] text-white",
+                popup: "bg-gradient-to-b bg-[#141B2D] text-white",
                 title: "text-red-400",
                 text: "text-gray-300",
               },
@@ -73,7 +73,7 @@ const ActiveTasks = ({ tasks }) => {
           icon: "info",
           confirmButtonText: `<span class="px-4 py-1 rounded-md transition-all duration-300 bg-gradient-to-r from-blue-500/20 to-teal-500/20 border border-blue-500/50 text-blue-400">OK</span>`,
           customClass: {
-            popup: "bg-gradient-to-b from-[#1F2A40] to-[#141B2D] text-white",
+            popup: "bg-gradient-to-b bg-[#141B2D] text-white",
             title: "text-blue-400",
             text: "text-gray-300",
           },
@@ -138,7 +138,7 @@ const ActiveTasks = ({ tasks }) => {
                 )}
 
                 <button
-                  onClick={() => setSelectedTask(task)} // Set the selected task
+                  onClick={() => setSelectedTask(task)}
                   className="px-4 py-1 rounded-md transition-all duration-300 bg-gradient-to-r from-blue-500/20 to-teal-500/20 border border-blue-500/50 text-blue-400"
                 >
                   Details
@@ -156,8 +156,8 @@ const ActiveTasks = ({ tasks }) => {
         <TaskSubmissionModal
           task={selectedTask}
           isSubmittedByCurrentUser={isSubmittedByCurrentUser}
-          onClose={() => setSelectedTask(null)} // Close the modal
-          // onSubmit={handleSubmitTask} // Pass the submit handler
+          onClose={() => setSelectedTask(null)} 
+          // onSubmit={handleSubmitTask}
         />
       )}
     </div>

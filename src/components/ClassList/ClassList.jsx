@@ -22,7 +22,7 @@ export default function ClassList() {
       confirmButtonText: `<span class="px-4 py-1 mr-2 rounded-md transition-all duration-300 bg-gradient-to-r from-red-600/20 to-red-700/20 border border-blue-500/50 text-blue-400">Yes, delete it!</span>`,
       cancelButtonText: `<span class="px-4 py-1 rounded-md transition-all duration-300 bg-gradient-to-r from-gray-700/20 to-gray-800/20 border border-gray-500 text-gray-300">Cancel</span>`,
       customClass: {
-        popup: "bg-gradient-to-b from-[#1F2A40] to-[#141B2D] text-white",
+        popup: "bg-gradient-to-b bg-[#141B2D] text-white",
         title: "text-blue-400",
         text: "text-gray-300",
       },
@@ -38,7 +38,7 @@ export default function ClassList() {
               icon: "success",
               confirmButtonText: `<span class="px-4 py-1 rounded-md transition-all duration-300 bg-gradient-to-r from-blue-500/20 to-teal-500/20 border border-blue-500/50 text-blue-400">OK</span>`,
               customClass: {
-                popup: "bg-gradient-to-b from-[#1F2A40] to-[#141B2D] text-white",
+                popup: "bg-gradient-to-b bg-[#141B2D] text-white",
                 title: "text-blue-400",
                 text: "text-gray-300",
               },
@@ -53,7 +53,7 @@ export default function ClassList() {
               icon: "error",
               confirmButtonText: `<span class="px-4 py-1 rounded-md transition-all duration-300 bg-gradient-to-r from-red-500/20 to-red-700/20 border border-red-500/50 text-red-400">OK</span>`,
               customClass: {
-                popup: "bg-gradient-to-b from-[#1F2A40] to-[#141B2D] text-white",
+                popup: "bg-gradient-to-b bg-[#141B2D] text-white",
                 title: "text-red-400",
                 text: "text-gray-300",
               },
@@ -67,7 +67,7 @@ export default function ClassList() {
           icon: "info",
           confirmButtonText: `<span class="px-4 py-1 rounded-md transition-all duration-300 bg-gradient-to-r from-blue-500/20 to-teal-500/20 border border-blue-500/50 text-blue-400">OK</span>`,
           customClass: {
-            popup: "bg-gradient-to-b from-[#1F2A40] to-[#141B2D] text-white",
+            popup: "bg-gradient-to-b bg-[#141B2D] text-white",
             title: "text-blue-400",
             text: "text-gray-300",
           },
