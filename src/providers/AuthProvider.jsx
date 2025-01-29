@@ -2,7 +2,7 @@
 import { useState, useEffect } from "react";
 import { AuthContext } from "../contexts";
 import auth from "../firebase/firebase";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useMutation } from "@tanstack/react-query";
 import axios from "axios";
 import {
   onAuthStateChanged,
@@ -15,35 +15,46 @@ import useAxios from "../hooks/useAxios";
 
 const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null); //firebase user details
-  const [userData, setUserData] = useState({}); //mongodb user details
+  const [userData, setUserData] = useState(null); //mongodb user details
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const { api } = useAxios();
   console.log("user on firebase: ", user);
+  console.log("userData and token from mongodb and server: ", userData);
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
       setUser(currentUser);
+
       setLoading(false);
     });
 
     return () => unsubscribe();
   }, []);
+  useEffect(() => {
+    if (!userData) {
+      setUser(null);
+    }
+  }, [userData]);
 
-  const {
-    data,
-    isLoading: userDataLoading,
-    error: userDataError,
-  } = useQuery({
-    queryKey: ["user", user?.email],
-    queryFn: async () => {
-      const { data } = await axios.get(
-        `${import.meta.env.VITE_BASE_URL}/user/${user?.email}`
-      );
-      console.log("user on mongo: ", data);
-      setUserData(data);
-      return data;
+  const fetchUserData = async (email) => {
+    const { data } = await axios.get(
+      `${import.meta.env.VITE_BASE_URL}/user/${email}`
+    );
+    console.log("user on mongo: ", data);
+    return data;
+  };
+
+  // Use the useMutation hook directly
+  //here i am not return the useMutation thats why i
+  //have to use fetchUserDataMutation little bit different which is inside login form and reg form
+  const fetchUserDataMutation = useMutation({
+    mutationFn: fetchUserData,
+    onSuccess: (data) => {
+      setUserData(data); // Update state with the fetched user data
     },
-    enabled: !!user?.email, // Fetch only if email exists
+    onError: (error) => {
+      console.error("Error fetching user data:", error);
+    },
   });
 
   const signUp = async (email, password) => {
@@ -65,7 +76,7 @@ const AuthProvider = ({ children }) => {
 
   const logout = async () => {
     setError(null);
-    setUserData({});
+    setUserData();
     return signOut(auth);
   };
 
@@ -75,12 +86,13 @@ const AuthProvider = ({ children }) => {
         user, //firebase user details
         userData, //mongodb user details
         setUserData,
-        loading: loading || userDataLoading,
-        error: error || userDataError,
+        loading: loading,
+        error: error,
         signUp,
         login,
         logout,
         updateUsername,
+        fetchUserDataMutation,
       }}
     >
       {children}

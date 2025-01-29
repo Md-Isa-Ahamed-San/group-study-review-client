@@ -1,15 +1,16 @@
 /* eslint-disable react/prop-types */
-import { useContext, useState } from "react";
+import axios from "axios";
+import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
-import { AuthContext } from "../contexts";
-import FieldSet from "../components/FieldSet";
 import Field from "../components/Field";
+import FieldSet from "../components/FieldSet";
+import useAuth from "../hooks/useAuth";
 
 const RegistrationForm = ({ onToggle }) => {
-  const { signUp, updateUsername } = useContext(AuthContext);
+  const { signUp, updateUsername,fetchUserDataMutation,setUserData } = useAuth()
   const navigate = useNavigate();
+
   const [errorMessage, setErrorMessage] = useState(null);
   const {
     register,
@@ -28,13 +29,22 @@ const RegistrationForm = ({ onToggle }) => {
         username: data.username,
         email: data.email,
       });
+      console.log("res after reg: ",res)
+      if(res.data.email){
+        const userData = await fetchUserDataMutation.mutateAsync(
+          res.data.email
+        );
+        setUserData(userData);
+        navigate("/");
+
+      }
 
       if (res.status !== 201) {
         setErrorMessage("Failed to register user in the database.");
         return;
       }
 
-      navigate("/");
+     
     } catch (err) {
       console.error("Error during registration:", err);
       if (err.response?.data?.message) {

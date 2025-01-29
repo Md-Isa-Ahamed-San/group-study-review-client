@@ -3,7 +3,7 @@ import useAuth from "../hooks/useAuth";
 import Loading from "../shared/Loading/Loading";
 
 const PrivateRoutes = () => {
-  const { user, loading } = useAuth();
+  const { user,userData, loading } = useAuth();
 
   // Wait for the authentication state to resolve
   if (loading) {
@@ -11,7 +11,7 @@ const PrivateRoutes = () => {
   }
 
   // Redirect to login if not authenticated
-  if (!user) {
+  if (!userData) {
     return <Navigate to="/authPanel" replace />;
   }
 

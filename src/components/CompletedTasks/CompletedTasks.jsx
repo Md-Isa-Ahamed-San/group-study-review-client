@@ -1,9 +1,15 @@
 /* eslint-disable react/prop-types */
-import { ArrowUpDown, ThumbsUp, Star } from "lucide-react";
+import { ArrowUpDown, Star, ThumbsUp } from "lucide-react";
+import { useState } from "react";
 import { Link } from "react-router-dom";
 
 const CompletedTasks = ({ tasks }) => {
-  // console.log("cmp:", tasks);
+  const [searchTerm, setSearchTerm] = useState("");
+
+  const filteredTasks = tasks?.filter((assignment) =>
+    assignment.title.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
   return (
     <div className="space-y-4">
       <h2 className="text-2xl font-bold mb-4 text-blue-500">Completed Tasks</h2>
@@ -11,8 +17,9 @@ const CompletedTasks = ({ tasks }) => {
         <input
           type="text"
           placeholder="Search completed tasks..."
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
           className="flex-grow p-2 bg-gray-700 border border-gray-600 rounded-md text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-white"
-          // Add logic for search functionality if required
         />
         <button className="p-2 bg-gray-700 rounded-md hover:bg-gray-600 transition duration-300">
           <ArrowUpDown className="h-5 w-5 text-blue-500" />
@@ -24,10 +31,9 @@ const CompletedTasks = ({ tasks }) => {
           <Star className="h-5 w-5 text-yellow-400" />
         </button>
       </div>
-      {tasks?.map((assignment,idx) => (
+      {filteredTasks?.map((assignment) => (
         <Link
           key={assignment._id}
-          // key={idx}
           to={`/dashboard/${assignment.class_id}/${assignment._id}`}
           state={{ assignment }}
         >
@@ -43,16 +49,6 @@ const CompletedTasks = ({ tasks }) => {
                 day: "numeric",
               })}
             </p>
-            <div className="mt-2 flex items-center space-x-4">
-              {/* <span className="text-sm text-gray-400 flex items-center">
-              <ThumbsUp className="h-4 w-4 mr-1 text-teal-400" />{" "}
-              {assignment.studentUpvotes}
-            </span>
-            <span className="text-sm text-gray-400 flex items-center">
-              <Star className="h-4 w-4 mr-1 text-yellow-400" />{" "}
-              {assignment.expertUpvotes}
-            </span> */}
-            </div>
           </div>
         </Link>
       ))}

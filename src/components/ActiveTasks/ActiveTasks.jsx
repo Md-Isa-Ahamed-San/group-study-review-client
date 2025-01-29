@@ -1,3 +1,4 @@
+/* eslint-disable react/prop-types */
 import { ArrowUpDown, Plus } from "lucide-react";
 import { useState } from "react";
 import Swal from "sweetalert2";
@@ -8,6 +9,7 @@ import TaskSubmissionModal from "../Modals/TaskSubmissionModal";
 
 const ActiveTasks = ({ tasks }) => {
   const [selectedTask, setSelectedTask] = useState(null);
+  const [searchQuery, setSearchQuery] = useState("");
   const { userData } = useAuth();
   const { setToggleCreateTaskModal, useDeleteTask } = useTask();
   const queryClient = useQueryClient();
@@ -18,7 +20,7 @@ const ActiveTasks = ({ tasks }) => {
   };
 
   const deleteTaskMutation = useDeleteTask();
-  
+
   const handleDelete = (taskId) => {
     Swal.fire({
       title: "Are you sure?",
@@ -36,7 +38,6 @@ const ActiveTasks = ({ tasks }) => {
     }).then((result) => {
       if (result.isConfirmed) {
         deleteTaskMutation.mutateAsync(taskId).then((res) => {
-          console.log("ressssss: ",res)
           if (res.success === true) {
             Swal.fire({
               title: "Deleted!",
@@ -66,22 +67,13 @@ const ActiveTasks = ({ tasks }) => {
             });
           }
         });
-      } else if (result.dismiss === Swal.DismissReason.cancel) {
-        Swal.fire({
-          title: "Cancelled",
-          text: "Your task is safe and not deleted.",
-          icon: "info",
-          confirmButtonText: `<span class="px-4 py-1 rounded-md transition-all duration-300 bg-gradient-to-r from-blue-500/20 to-teal-500/20 border border-blue-500/50 text-blue-400">OK</span>`,
-          customClass: {
-            popup: "bg-gradient-to-b bg-[#141B2D] text-white",
-            title: "text-blue-400",
-            text: "text-gray-300",
-          },
-          buttonsStyling: false,
-        });
       }
     });
   };
+
+  const filteredTasks = tasks?.filter((task) =>
+    task.title.toLowerCase().includes(searchQuery.toLowerCase())
+  );
 
   return (
     <div className="space-y-4">
@@ -90,6 +82,8 @@ const ActiveTasks = ({ tasks }) => {
         <input
           type="text"
           placeholder="Search active tasks..."
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
           className="flex-grow p-2 bg-gray-700 border border-gray-600 rounded-md text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-white"
         />
         <button
@@ -102,8 +96,8 @@ const ActiveTasks = ({ tasks }) => {
           <ArrowUpDown className="h-5 w-5 text-blue-500" />
         </button>
       </div>
-      {tasks?.length > 0 ? (
-        tasks.map((task) => (
+      {filteredTasks?.length > 0 ? (
+        filteredTasks.map((task) => (
           <div
             key={task._id}
             className="bg-gradient-to-br relative from-[#1F2A40] to-[#141B2D] p-4 rounded-lg shadow-lg border border-gray-600"
@@ -136,7 +130,6 @@ const ActiveTasks = ({ tasks }) => {
                     Delete
                   </button>
                 )}
-
                 <button
                   onClick={() => setSelectedTask(task)}
                   className="px-4 py-1 rounded-md transition-all duration-300 bg-gradient-to-r from-blue-500/20 to-teal-500/20 border border-blue-500/50 text-blue-400"
@@ -150,14 +143,11 @@ const ActiveTasks = ({ tasks }) => {
       ) : (
         <p className="text-gray-400">No active tasks available.</p>
       )}
-
-      {/* Modal for task details and submission */}
       {selectedTask && (
         <TaskSubmissionModal
           task={selectedTask}
           isSubmittedByCurrentUser={isSubmittedByCurrentUser}
-          onClose={() => setSelectedTask(null)} 
-          // onSubmit={handleSubmitTask}
+          onClose={() => setSelectedTask(null)}
         />
       )}
     </div>

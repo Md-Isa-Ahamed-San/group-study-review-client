@@ -1,4 +1,4 @@
-import { useContext, useEffect} from "react";
+import { useContext, useEffect } from "react";
 import axios from "axios";
 import { AuthContext } from "../contexts";
 import { api } from "../api/api";
@@ -48,7 +48,7 @@ const useAxios = () => {
             if (!refreshToken) {
               throw new Error("Refresh token is missing.");
             }
-
+            console.log("gggggggggggggggggggg");
             const response = await axios.post(
               `${import.meta.env.VITE_BASE_URL}/auth/refresh-token`,
               { refreshToken }

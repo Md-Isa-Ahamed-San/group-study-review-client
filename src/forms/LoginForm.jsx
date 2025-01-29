@@ -1,13 +1,14 @@
-import React, { useContext } from "react";
+/* eslint-disable react/prop-types */
+
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
-import { AuthContext } from "../contexts";
 import FieldSet from "../components/FieldSet";
 import Field from "../components/Field";
-
+import useAuth from "../hooks/useAuth";
 
 const LoginForm = ({ onToggle }) => {
-  const { login } = useContext(AuthContext);
+  const { login, setUserData, fetchUserDataMutation } = useAuth();
+
   const {
     register,
     handleSubmit,
@@ -17,10 +18,21 @@ const LoginForm = ({ onToggle }) => {
 
   const onSubmit = async (data) => {
     console.log(data);
-    const user = await login(data.email, data.password);
-    console.log("🚀 ~ onSubmit ~ user:", user);
-    if (user) {
-      navigate("/");
+    const res = await login(data.email, data.password);
+    console.log("🚀 ~ onSubmit ~ user:", res);
+
+    if (res.user.email) {
+      //here inside AuthProvider i am not return the useMutation thats why i
+      //have to use fetchUserDataMutation like this
+      try {
+        const userData = await fetchUserDataMutation.mutateAsync(
+          res.user.email
+        );
+        setUserData(userData);
+        navigate("/");
+      } catch (error) {
+        console.error("Error fetching user data:", error);
+      }
     }
   };
 
@@ -84,4 +96,3 @@ const LoginForm = ({ onToggle }) => {
 };
 
 export default LoginForm;
-
