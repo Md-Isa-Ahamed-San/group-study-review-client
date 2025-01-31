@@ -34,6 +34,7 @@ const RegistrationForm = ({ onToggle }) => {
         const userData = await fetchUserDataMutation.mutateAsync(
           res.data.email
         );
+        localStorage.setItem("userData", JSON.stringify(userData));
         setUserData(userData);
         navigate("/");
 

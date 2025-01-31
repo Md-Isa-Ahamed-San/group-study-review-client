@@ -28,6 +28,7 @@ const LoginForm = ({ onToggle }) => {
         const userData = await fetchUserDataMutation.mutateAsync(
           res.user.email
         );
+        localStorage.setItem("userData", JSON.stringify(userData));
         setUserData(userData);
         navigate("/");
       } catch (error) {

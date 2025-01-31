@@ -11,7 +11,7 @@ export default function ClassList() {
   const { data: classList, isLoading, isError, error } = useFetchClasses();
   const deleteClassMutation = useDeleteClass();
   const {userData} = useAuth()
-  console.log("classlist: ",classList)
+  // console.log("classlist: ",classList)
   const queryClient = useQueryClient();
   const handleDelete = (classId) => {
     Swal.fire({

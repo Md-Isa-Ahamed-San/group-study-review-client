@@ -1,59 +1,65 @@
-/* eslint-disable react/prop-types */
-import { useState, useEffect } from "react";
-import { AuthContext } from "../contexts";
-import auth from "../firebase/firebase";
-import { useQuery, useMutation } from "@tanstack/react-query";
+import { useMutation } from "@tanstack/react-query";
 import axios from "axios";
 import {
-  onAuthStateChanged,
   createUserWithEmailAndPassword,
+  onAuthStateChanged,
   signInWithEmailAndPassword,
   signOut,
   updateProfile,
 } from "firebase/auth";
+import { useEffect, useState } from "react";
+import { AuthContext } from "../contexts";
+import auth from "../firebase/firebase";
 import useAxios from "../hooks/useAxios";
 
 const AuthProvider = ({ children }) => {
-  const [user, setUser] = useState(null); //firebase user details
-  const [userData, setUserData] = useState(null); //mongodb user details
+  const [user, setUser] = useState(null); // Firebase user details
+  const [userData, setUserData] = useState(null); // MongoDB user details
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const { api } = useAxios();
-  console.log("user on firebase: ", user);
-  console.log("userData and token from mongodb and server: ", userData);
+
+  console.log("Firebase user: ", user);
+  console.log("MongoDB userData: ", userData);
+
+  // Handle Firebase Auth State
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
       setUser(currentUser);
-
       setLoading(false);
     });
 
     return () => unsubscribe();
   }, []);
+
+  // Retrieve userData from localStorage when user is set
   useEffect(() => {
-    if (!userData) {
-      setUser(null);
+    if (user && !userData) {
+      const storedUserData = localStorage.getItem("userData");
+
+      if (storedUserData) {
+        console.log("Retrieving userData from localStorage...");
+        setUserData(JSON.parse(storedUserData));
+      }
     }
-  }, [userData]);
+  }, [user, userData]); // Only runs when `user` or `userData` changes
 
   const fetchUserData = async (email) => {
     const { data } = await axios.get(
       `${import.meta.env.VITE_BASE_URL}/user/${email}`
     );
-    console.log("user on mongo: ", data);
+    console.log("Fetched userData from MongoDB: ", data);
     return data;
   };
 
-  // Use the useMutation hook directly
-  //here i am not return the useMutation thats why i
-  //have to use fetchUserDataMutation little bit different which is inside login form and reg form
   const fetchUserDataMutation = useMutation({
     mutationFn: fetchUserData,
     onSuccess: (data) => {
-      setUserData(data); // Update state with the fetched user data
+      setUserData(data);
+      localStorage.setItem("userData", JSON.stringify(data)); // Store userData in localStorage
     },
     onError: (error) => {
-      console.error("Error fetching user data:", error);
+      console.error("Error fetching userData:", error);
     },
   });
 
@@ -76,18 +82,19 @@ const AuthProvider = ({ children }) => {
 
   const logout = async () => {
     setError(null);
-    setUserData();
+    setUserData(null);
+    localStorage.removeItem("userData"); // Clear userData from localStorage
     return signOut(auth);
   };
 
   return (
     <AuthContext.Provider
       value={{
-        user, //firebase user details
-        userData, //mongodb user details
+        user, // Firebase user details
+        userData, // MongoDB user details
         setUserData,
-        loading: loading,
-        error: error,
+        loading,
+        error,
         signUp,
         login,
         logout,

@@ -1,6 +1,5 @@
-import { useContext, useEffect } from "react";
+import { useEffect } from "react";
 import axios from "axios";
-import { AuthContext } from "../contexts";
 import { api } from "../api/api";
 import useAuth from "./useAuth";
 
@@ -39,8 +38,9 @@ const useAxios = () => {
       (response) => response,
       async (error) => {
         const originalRequest = error.config;
+        console.log("error.res after time out of token: ", error);
 
-        if (error.response?.status === 401 && !originalRequest._retry) {
+        if (error.status === 403 && !originalRequest._retry) {
           originalRequest._retry = true;
 
           try {
@@ -60,17 +60,16 @@ const useAxios = () => {
             setUserData({
               ...userData,
               token: {
-                authToken,
-                refreshToken: newRefreshToken,
+                authToken
               },
             });
 
             // Retry the original request with the new token
             originalRequest.headers.Authorization = `Bearer ${authToken}`;
             return axios(originalRequest);
-          } catch (refreshError) {
-            console.error("Failed to refresh token:", refreshError);
-            throw refreshError;
+          } catch (error) {
+            console.error("Failed to refresh token:", error);
+            throw error;
           }
         }
         return Promise.reject(error);
@@ -82,7 +81,7 @@ const useAxios = () => {
       api.interceptors.request.eject(requestIntercept);
       api.interceptors.response.eject(responseIntercept);
     };
-  }, [userData, setUserData]);
+  }, [userData]);
 
   return { api };
 };
