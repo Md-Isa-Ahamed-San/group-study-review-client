@@ -4,7 +4,9 @@ import { api } from "../api/api";
 import useAuth from "./useAuth";
 
 const useAxios = () => {
+
   const context = useAuth();
+  const loading = context?.loading;
   // Get userData and setUserData from AuthContext
   //   const userData = context?.userData || {};
   const userData = context?.userData;
@@ -81,7 +83,7 @@ const useAxios = () => {
       api.interceptors.request.eject(requestIntercept);
       api.interceptors.response.eject(responseIntercept);
     };
-  }, [userData]);
+  }, [userData,setUserData]);
 
   return { api };
 };

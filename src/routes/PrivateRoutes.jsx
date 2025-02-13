@@ -11,8 +11,9 @@ const PrivateRoutes = () => {
   }
 
   // Redirect to login if not authenticated
-  if (!userData) {
+  if (!user) {
     return <Navigate to="/authPanel" replace />;
+    // return <Outlet />;
   }
 
   // Render child routes if authenticated
