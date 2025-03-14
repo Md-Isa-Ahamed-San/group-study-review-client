@@ -30,7 +30,7 @@ const DashboardNavbar = ({ setIsSidebarOpen }) => {
   };
 
   return (
-    <nav className="bg-gray-800 shadow-lg p-4 flex justify-between items-center sticky top-0 z-10">
+    <nav className="bg-gray-800 shadow-lg p-4 flex justify-between items-center">
       <div className="flex gap-4 items-center">
         {/* Sidebar Toggle */}
         <IconButton

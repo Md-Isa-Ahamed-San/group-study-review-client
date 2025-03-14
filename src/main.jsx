@@ -18,7 +18,8 @@ createRoot(document.getElementById("root")).render(
           <TaskProvider>
             <Router>
               <>
-                <Toaster />{/* putting here so the toaster can be seen anywhere */}
+                <Toaster />
+                {/* putting here so the toaster can be seen anywhere */}
                 <App />
               </>
             </Router>

@@ -19,7 +19,6 @@ export default function Hero() {
                     Get Started for Free
                   </Link>)
             }
-          
         </div>
       </div>
     </div>

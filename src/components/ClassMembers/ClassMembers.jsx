@@ -1,39 +1,20 @@
 /* eslint-disable react/prop-types */
 import { useQueryClient } from "@tanstack/react-query";
-import {
-  ArrowDownCircle,
-  ArrowUpCircle,
-  Search,
-  User,
-  UserRoundCog
-} from "lucide-react";
-import { useParams } from "react-router-dom";
-import Swal from "sweetalert2";
+import { Search, User, UserRoundCog, EllipsisVertical, X } from "lucide-react";
 import { useState } from "react";
 import useAuth from "../../hooks/useAuth";
 import useClass from "../../hooks/useClass";
 import useTask from "../../hooks/useTask";
 
-const ClassMembers = ({
-  members,
-  experts,
-  admins,
-  classCode,
-  onPromoteUser,
-}) => {
+const ClassMembers = ({ members, experts, classCode }) => {
   const { userData } = useAuth();
   const { useChangeRole } = useClass();
   const changeRoleMutation = useChangeRole();
   const queryClient = useQueryClient();
-  const { classId } = useParams();
   const { useFetchClassesById } = useTask();
-  const { data: classData } = useFetchClassesById(classId);
+
   const [searchTerm, setSearchTerm] = useState("");
-  
-  const handleCopyClassCode = () => {
-    navigator.clipboard.writeText(classCode);
-    alert("Class code copied to clipboard!");
-  };
+  const [selectedUser, setSelectedUser] = useState(null);
 
   const handleSearchChange = (e) => {
     setSearchTerm(e.target.value.toLowerCase());
@@ -45,8 +26,23 @@ const ClassMembers = ({
     );
   };
 
+  // Handle Role Change (Promote or Demote)
+  const handleChangeRole = async (userId, action) => {
+    try {
+      await changeRoleMutation.mutateAsync({
+        userId,
+        classCode,
+        creator: userData?.user?._id,
+      });
+      queryClient.invalidateQueries(["classMembers"]);
+      setSelectedUser(null); // Close modal
+    } catch (error) {
+      console.error("Role change error:", error);
+    }
+  };
+
   return (
-    <div className="px-4 sm:px-6 lg:px-8 max-w-4xl mx-auto">
+    <div className="px-4 sm:px-6 lg:px-8 max-w-4xl mx-auto relative">
       <h2 className="text-2xl font-bold mb-6 text-blue-500 text-center lg:text-left">
         Class Members
       </h2>
@@ -72,11 +68,21 @@ const ClassMembers = ({
           </h3>
           <div className="space-y-4 max-h-40 overflow-y-auto scrollbar-thin scrollbar-thumb-gray-700 scrollbar-track-gray-900">
             {filterMembers(experts).map((member) => (
-              <div key={member._id} className="flex items-center space-x-4 p-3 bg-gray-800 hover:bg-gray-700 rounded-lg shadow-md transition duration-300">
-                <UserRoundCog className="text-yellow-400 w-10 h-10" />
-                <div>
-                  <p className="font-semibold text-yellow-400">{member.username}</p>
+              <div
+                key={member._id}
+                className="flex items-center justify-between p-3 bg-gray-800 hover:bg-gray-700 rounded-lg shadow-md transition duration-300"
+              >
+                <div className="flex items-center space-x-4">
+                  <UserRoundCog className="text-yellow-400 w-10 h-10" />
+                  <p className="font-semibold text-yellow-400">
+                    {member.username}
+                  </p>
                 </div>
+
+                <EllipsisVertical
+                  className="w-6 h-6 text-white cursor-pointer"
+                  onClick={() => setSelectedUser({ ...member, action: "demote" })}
+                />
               </div>
             ))}
           </div>
@@ -89,16 +95,70 @@ const ClassMembers = ({
           </h3>
           <div className="space-y-4 max-h-40 overflow-y-auto scrollbar-thin scrollbar-thumb-gray-700 scrollbar-track-gray-900">
             {filterMembers(members).map((member) => (
-              <div key={member._id} className="flex items-center space-x-4 p-3 bg-gray-800 hover:bg-gray-700 rounded-lg shadow-md transition duration-300">
-                <User className="w-10 h-10 text-gray-400" />
-                <div>
+              <div
+                key={member._id}
+                className="flex items-center justify-between p-3 bg-gray-800 hover:bg-gray-700 rounded-lg shadow-md transition duration-300"
+              >
+                <div className="flex items-center space-x-4">
+                  <User className="w-10 h-10 text-gray-400" />
                   <p className="font-semibold text-white">{member.username}</p>
                 </div>
+
+                <EllipsisVertical
+                  className="w-6 h-6 text-white cursor-pointer"
+                  onClick={() => setSelectedUser({ ...member, action: "promote" })}
+                />
               </div>
             ))}
           </div>
         </div>
       </div>
+
+      {/* Global Modal for Promotion/Demotion */}
+      {selectedUser && (
+        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
+          <div className="bg-gray-800 p-6 rounded-lg shadow-lg text-white w-80 relative">
+            <button
+              className="absolute top-2 right-2 text-gray-400 hover:text-white"
+              onClick={() => setSelectedUser(null)}
+            >
+              <X className="w-5 h-5" />
+            </button>
+
+            <h3 className="text-lg font-semibold text-center mb-4">
+              {selectedUser.action === "promote"
+                ? "Promote to Expert"
+                : "Demote to Member"}
+            </h3>
+
+            <p className="text-center text-gray-300 mb-6">
+              Are you sure you want to {selectedUser.action}{" "}
+              <span className="font-bold">{selectedUser.username}</span>?
+            </p>
+
+            <div className="flex justify-center gap-4">
+              <button
+                className="bg-gray-600 px-4 py-2 rounded-md"
+                onClick={() => setSelectedUser(null)}
+              >
+                Cancel
+              </button>
+              <button
+                className={`px-4 py-2 rounded-md ${
+                  selectedUser.action === "promote"
+                    ? "bg-green-500 hover:bg-green-600"
+                    : "bg-red-500 hover:bg-red-600"
+                }`}
+                onClick={() =>
+                  handleChangeRole(selectedUser._id, selectedUser.action)
+                }
+              >
+                {selectedUser.action === "promote" ? "Promote" : "Demote"}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

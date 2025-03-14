@@ -1,14 +1,13 @@
 import { useState } from "react";
+import { Outlet, useParams } from "react-router-dom";
 import DashboardNavbar from "../../components/DashboardNavbar/DashboardNavbar";
-import { Outlet } from "react-router-dom";
-import Sidebar from "../../components/Sidebar/Sidebar";
-import useAuth from "../../hooks/useAuth";
 import ClassCreateModal from "../../components/Modals/ClassCreateModal";
 import JoinClassModal from "../../components/Modals/JoinClassModal";
 import TaskModal from "../../components/Modals/TaskModal";
+import Sidebar from "../../components/Sidebar/Sidebar";
+import useAuth from "../../hooks/useAuth";
 import useClass from "../../hooks/useClass";
 import useTask from "../../hooks/useTask";
-import { useParams } from "react-router-dom";
 export default function Dashboard() {
   
   const {
@@ -25,7 +24,7 @@ export default function Dashboard() {
   const { classId } = useParams();
 
   return (
-    <>
+    <div className="flex flex-col h-screen">
       <DashboardNavbar setIsSidebarOpen={setIsSidebarOpen} />
       <div className="flex h-screen bg-gray-900 text-gray-100">
         <Sidebar
@@ -56,6 +55,6 @@ export default function Dashboard() {
           }
         </div>
       </div>
-    </>
+    </div>
   );
 }
