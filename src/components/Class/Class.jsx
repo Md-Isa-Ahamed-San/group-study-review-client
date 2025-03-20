@@ -9,7 +9,7 @@ import Loading from "../../shared/Loading/Loading";
 const Class = ({ setToggleCreateTaskModal }) => {
   const { classId } = useParams(); // Get the class ID from the route params
   const { useFetchClassesById } = useTask();
-  // console.log("id of class inside class :",id)
+
   // Fetch class data using the ID
   const {
     data: classData,
@@ -24,25 +24,30 @@ const Class = ({ setToggleCreateTaskModal }) => {
   const completedTasks = classData?.data?.tasks?.filter(
     (task) => task.status === "completed"
   );
-  // console.log("🚀 ~ Class ~ completedTasks:", completedTasks)
-  console.log("classData: ",classData)
-  if (isLoading) return <Loading/>;
+
+  if (isLoading) return <Loading />;
   if (isError) return <p>Error: {error.message}</p>;
 
   return (
     <div className="flex-1 flex flex-col transition-all duration-300">
-      <div className="flex-1 p-6 grid grid-cols-1 md:grid-cols-3 gap-6 overflow-auto">
-        <ActiveTasks
-          tasks={activeTasks}
-          setToggleCreateTaskModal={setToggleCreateTaskModal}
-        />
-        <CompletedTasks tasks={completedTasks} />
-        <ClassMembers
-          members={classData?.data?.members}
-          experts={classData?.data?.experts}
-          admins ={classData?.data?.admins}
-          classCode={classData?.data?.class_code}
-        />
+      <div className="flex-1 p-6 flex flex-col md:flex-row gap-6 overflow-auto flex-wrap">
+        <div className="flex-1">
+          <ActiveTasks
+            tasks={activeTasks}
+            setToggleCreateTaskModal={setToggleCreateTaskModal}
+          />
+        </div>
+        <div className="flex-1">
+          <CompletedTasks tasks={completedTasks} />
+        </div>
+        <div className="flex-1">
+          <ClassMembers
+            members={classData?.data?.members}
+            experts={classData?.data?.experts}
+            admins={classData?.data?.admins}
+            classCode={classData?.data?.class_code}
+          />
+        </div>
       </div>
     </div>
   );

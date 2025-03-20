@@ -10,21 +10,24 @@ import {
 import { useEffect, useState } from "react";
 import { AuthContext } from "../contexts";
 import auth from "../firebase/firebase";
-import useAxios from "../hooks/useAxios";
 
+// eslint-disable-next-line react/prop-types
 const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null); // Firebase user details
-  const [userData, setUserData] = useState(null); // MongoDB user details
+  const [userData, setUserData] = useState(() => {
+    const storedUser = localStorage.getItem("userData");
+    return storedUser ? JSON.parse(storedUser) : null;
+  }); //! Previously i set the initial value to NULL which caused
+  //!  userData undefined for a few moments on page refresh which cause pb on jwt token implementation.
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const { api } = useAxios();
 
   console.log("Firebase user: ", user);
   console.log("MongoDB userData: ", userData);
 
   // Handle Firebase Auth State
   useEffect(() => {
-    setLoading(true)
+    setLoading(true);
     const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
       setUser(currentUser);
       setLoading(false);
@@ -33,35 +36,30 @@ const AuthProvider = ({ children }) => {
     return () => unsubscribe();
   }, []);
 
-  // Retrieve userData from localStorage when user is set
-  useEffect(() => {
-    if (user && !userData) {
-      const storedUserData = localStorage.getItem("userData");
-
-      if (storedUserData) {
-        console.log("Retrieving userData from localStorage...");
-        setUserData(JSON.parse(storedUserData));
-      }
-    }
-  }, [user, userData]); // Only runs when `user` or `userData` changes
-
+  // Fetch userData when user logs in
   const fetchUserData = async (email) => {
-    const { data } = await axios.get(
-      `${import.meta.env.VITE_BASE_URL}/user/${email}`
-    );
-    console.log("Fetched userData from MongoDB: ", data);
-    return data;
+    try {
+      const { data } = await axios.get(
+        `${import.meta.env.VITE_BASE_URL}/user/${email}`
+      );
+      console.log("Fetched userData from MongoDB: ", data);
+      setUserData(data);
+      localStorage.setItem("userData", JSON.stringify(data));
+      return data;
+    } catch (error) {
+      console.error("Error fetching userData:", error);
+      throw error;
+    }
   };
 
+  // Fetch userData when Firebase user changes
+  useEffect(() => {
+    if (user && !userData) {
+      fetchUserData(user.email);
+    }
+  }, [user, userData]);
   const fetchUserDataMutation = useMutation({
-    mutationFn: fetchUserData,
-    onSuccess: (data) => {
-      setUserData(data);
-      localStorage.setItem("userData", JSON.stringify(data)); // Store userData in localStorage
-    },
-    onError: (error) => {
-      console.error("Error fetching userData:", error);
-    },
+    mutationFn: (email) => fetchUserData(email),
   });
 
   const signUp = async (email, password) => {
@@ -70,10 +68,8 @@ const AuthProvider = ({ children }) => {
   };
 
   const updateUsername = async (userProfile, username) => {
-    if (userProfile) {
-      return updateProfile(userProfile, { displayName: username });
-    }
-    throw new Error("User profile is undefined.");
+    if (!userProfile) throw new Error("User profile is undefined.");
+    return updateProfile(userProfile, { displayName: username });
   };
 
   const login = async (email, password) => {
@@ -84,15 +80,15 @@ const AuthProvider = ({ children }) => {
   const logout = async () => {
     setError(null);
     setUserData(null);
-    localStorage.removeItem("userData"); // Clear userData from localStorage
+    localStorage.removeItem("userData"); //! i am setting mongoDB user data on local storage so i must remove these when logout happens
     return signOut(auth);
   };
 
   return (
     <AuthContext.Provider
       value={{
-        user, // Firebase user details
-        userData, // MongoDB user details
+        user,
+        userData,
         setUserData,
         loading,
         error,

@@ -3,11 +3,11 @@ import useAuth from "../hooks/useAuth";
 import Loading from "../shared/Loading/Loading";
 
 const PrivateRoutes = () => {
-  const { user,userData, loading } = useAuth();
+  const { user, loading } = useAuth();
 
   // Wait for the authentication state to resolve
   if (loading) {
-    return <Loading/>; // Show a loading spinner or message
+    return <Loading />;
   }
 
   // Redirect to login if not authenticated

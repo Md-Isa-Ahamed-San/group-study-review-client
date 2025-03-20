@@ -9,6 +9,8 @@ import useAuth from "../../hooks/useAuth";
 export default function ClassList() {
   const { useFetchClasses, useDeleteClass } = useClass();
   const { data: classList, isLoading, isError, error } = useFetchClasses();
+
+
   const deleteClassMutation = useDeleteClass();
   const {userData} = useAuth()
   // console.log("classlist: ",classList)

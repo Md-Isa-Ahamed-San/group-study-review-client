@@ -1,21 +1,12 @@
-import { useEffect } from "react";
 import axios from "axios";
+import { useEffect } from "react";
 import { api } from "../api/api";
 import useAuth from "./useAuth";
 
 const useAxios = () => {
-
-  const context = useAuth();
-  const loading = context?.loading;
-  // Get userData and setUserData from AuthContext
-  //   const userData = context?.userData || {};
-  const userData = context?.userData;
-
-  const setUserData = context?.setUserData;
-  console.log("🚀 ~ useAxios ~ UserData:", userData);
+  const { userData, setUserData, logout } = useAuth();
 
   useEffect(() => {
-    // Only set up interceptors if userData is populated
     if (!userData?.token?.authToken) {
       console.log("userData is not ready, skipping interceptor setup.");
       return;
@@ -26,9 +17,8 @@ const useAxios = () => {
     // Add a request interceptor
     const requestIntercept = api.interceptors.request.use(
       (config) => {
-        const authToken = userData?.token?.authToken;
-        if (authToken) {
-          config.headers.Authorization = `Bearer ${authToken}`;
+        if (userData?.token?.authToken) {
+          config.headers.Authorization = `Bearer ${userData.token.authToken}`;
         }
         return config;
       },
@@ -40,51 +30,59 @@ const useAxios = () => {
       (response) => response,
       async (error) => {
         const originalRequest = error.config;
-        console.log("error.res after time out of token: ", error);
+        console.log("Error in useAxios:", error);
 
-        if (error.status === 403 && !originalRequest._retry) {
+        // ✅ FIXED: Proper check for refresh token expiration
+        if (error.response?.data?.code === "TOKEN_EXPIRED" && !originalRequest._retry) {
+          console.log("Refresh token expired. Logging out user.");
+          logout(); // ✅ Ensures user is logged out when refresh token expires
+          return Promise.reject(error);
+        }
+
+        if (error.response?.data?.message === "Invalid or Expired Token." && !originalRequest._retry) {
           originalRequest._retry = true;
 
           try {
             const refreshToken = userData?.token?.refreshToken;
-            if (!refreshToken) {
-              throw new Error("Refresh token is missing.");
-            }
-            console.log("gggggggggggggggggggg");
+            if (!refreshToken) throw new Error("Refresh token is missing.");
+
             const response = await axios.post(
               `${import.meta.env.VITE_BASE_URL}/auth/refresh-token`,
               { refreshToken }
             );
 
-            const { authToken, refreshToken: newRefreshToken } = response.data;
+            console.log("Response after getting new refresh token:", response);
+            const { authToken, refreshToken: newRefreshToken } = response.data.token;
 
-            // Update tokens in the AuthContext
-            setUserData({
-              ...userData,
-              token: {
-                authToken
-              },
-            });
+            // ✅ FIXED: Ensure new tokens are properly set before retrying
+            setUserData((prev) => ({
+              ...prev,
+              token: { authToken, refreshToken: newRefreshToken },
+            }));
 
-            // Retry the original request with the new token
+            console.log("Got new Token..");
+
+            // ✅ FIXED: Set new token in the request before retrying
             originalRequest.headers.Authorization = `Bearer ${authToken}`;
             return axios(originalRequest);
           } catch (error) {
             console.error("Failed to refresh token:", error);
+            logout(); // ✅ Ensure user logs out if token refresh fails
             throw error;
           }
         }
+
         return Promise.reject(error);
       }
     );
 
-    // Cleanup interceptors on unmount or when userData changes
     return () => {
       api.interceptors.request.eject(requestIntercept);
       api.interceptors.response.eject(responseIntercept);
     };
-  }, [userData,setUserData]);
+  }, [userData, setUserData]);
 
   return { api };
 };
+
 export default useAxios;

@@ -1,7 +1,9 @@
 /* eslint-disable react/prop-types */
 import { useQueryClient } from "@tanstack/react-query";
-import { Search, User, UserRoundCog, EllipsisVertical, X } from "lucide-react";
+import { Copy, EllipsisVertical, Search, User, UserRoundCog, X } from "lucide-react";
 import { useState } from "react";
+import toast, { Toaster } from "react-hot-toast";
+import { useParams } from "react-router-dom";
 import useAuth from "../../hooks/useAuth";
 import useClass from "../../hooks/useClass";
 import useTask from "../../hooks/useTask";
@@ -11,8 +13,18 @@ const ClassMembers = ({ members, experts, classCode }) => {
   const { useChangeRole } = useClass();
   const changeRoleMutation = useChangeRole();
   const queryClient = useQueryClient();
+  const { classId } = useParams(); // Get the class ID from the route params
   const { useFetchClassesById } = useTask();
 
+  const {
+    data: classData,
+    isLoading,
+    isError,
+    error,
+  } = useFetchClassesById(classId);
+  
+  const classCodeToShow = classData?.data?.class_code || "N/A"; // Get class code safely
+  
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedUser, setSelectedUser] = useState(null);
 
@@ -41,11 +53,34 @@ const ClassMembers = ({ members, experts, classCode }) => {
     }
   };
 
+  // Handle Copy Class Code
+  const handleCopyClassCode = () => {
+    navigator.clipboard.writeText(classCodeToShow);
+    toast.success("Class code copied to clipboard!");
+  };
+
   return (
     <div className="px-4 sm:px-6 lg:px-8 max-w-4xl mx-auto relative">
+      <Toaster position="top-center" reverseOrder={false} />
+      
       <h2 className="text-2xl font-bold mb-6 text-blue-500 text-center lg:text-left">
         Class Members
       </h2>
+
+      {/* Class Code Section */}
+      <div className="flex items-center justify-between bg-gray-800 text-white p-4 rounded-lg shadow-md mb-6">
+        <span className="text-lg font-semibold">
+          Class Code: {classCodeToShow}
+        </span>
+        <button
+          onClick={handleCopyClassCode}
+          className="flex items-center bg-blue-600 hover:bg-blue-700 text-white px-3 py-2 rounded-md transition duration-300"
+        >
+          <Copy className="h-5 w-5 mr-2" />
+          Copy
+        </button>
+      </div>
+
       <div className="bg-gradient-to-br from-[#1F2A40] to-[#141B2D] p-6 rounded-lg shadow-lg border border-gray-700">
         {/* Search Section */}
         <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-4 mb-6">
