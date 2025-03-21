@@ -86,14 +86,14 @@ const ClassProvider = ({ children }) => {
     });
   };
 
-  const changeRole = async ({ userId, classCode,creator }) => {
-    console.log("changeRole: ",userId, classCode);
+  const changeRole = async ({ userId, classCode, creator }) => {
+    console.log("changeRole: ", userId, classCode);
     try {
       const response = await api.patch(
         `${import.meta.env.VITE_BASE_URL}/classes/${classCode}/change-role`,
         {
           userId,
-          creator
+          creator,
         }
       );
       console.log("response in changeRole: ", response);
@@ -105,9 +105,24 @@ const ClassProvider = ({ children }) => {
 
   const useChangeRole = () =>
     useMutation({
-      mutationFn: ({ userId, classCode,creator }) => changeRole({ userId, classCode,creator }),
+      mutationFn: ({ userId, classCode, creator }) =>
+        changeRole({ userId, classCode, creator }),
     });
 
+  const fetchUserProfile = async () => {
+    const { data } = await api.get(
+      `${import.meta.env.VITE_BASE_URL}/user/profile/${user?.email}`
+    );
+    return data;
+  };
+
+  const useFetchUserProfile = () =>
+    useQuery({
+      queryKey: ["userProfile", user?.email],
+      queryFn: () => fetchUserProfile(user?.email),
+      enabled: !!user?.email,
+    });
+console.log("user.emaol: ",user?.email)
   return (
     <ClassContext.Provider
       value={{
@@ -120,6 +135,7 @@ const ClassProvider = ({ children }) => {
         useFetchClasses,
         useJoinClass,
         useChangeRole,
+        useFetchUserProfile,
       }}
     >
       {children}
