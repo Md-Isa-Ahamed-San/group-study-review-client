@@ -62,7 +62,7 @@ const Profile = () => {
         </div>
       </div>
 
-      {/* Engagement Stats */}
+      {/* Engagement Statss */}
       <div className="mt-6 grid grid-cols-2 md:grid-cols-3 gap-4">
         <div className="bg-gray-800 p-4 rounded-lg flex items-center gap-2 shadow-sm">
           <FaThumbsUp className="text-blue-400 text-2xl" />
