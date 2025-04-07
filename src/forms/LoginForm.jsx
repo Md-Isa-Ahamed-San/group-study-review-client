@@ -5,10 +5,11 @@ import { useNavigate } from "react-router-dom";
 import FieldSet from "../components/FieldSet";
 import Field from "../components/Field";
 import useAuth from "../hooks/useAuth";
+import { useState } from "react";
 
 const LoginForm = ({ onToggle }) => {
   const { login, setUserData, fetchUserDataMutation } = useAuth();
-
+const[loggingIn,setLoggingIn] = useState(false)
   const {
     register,
     handleSubmit,
@@ -19,6 +20,7 @@ const LoginForm = ({ onToggle }) => {
   const onSubmit = async (data) => {
     console.log(data);
     const res = await login(data.email, data.password);
+    setLoggingIn(true)
     console.log("🚀 ~ onSubmit ~ user:", res);
 
     if (res.user.email) {
@@ -31,6 +33,7 @@ const LoginForm = ({ onToggle }) => {
         console.log(" onSubmit ~ userData:", userData)
         localStorage.setItem("userData", JSON.stringify(userData));
         setUserData(userData);
+        setLoggingIn(false)
         navigate("/");
       } catch (error) {
         console.error("Error fetching user data:", error);
@@ -77,9 +80,14 @@ const LoginForm = ({ onToggle }) => {
               required
             />
           </Field>
-          <button className="w-full bg-blue-900 hover:bg-gray-600 text-gray-100 font-bold py-2 px-4 rounded transition-colors duration-300 mt-8">
-            LOGIN
-          </button>
+          {
+            loggingIn? (<button className="w-full bg-blue-900 hover:bg-gray-600 text-gray-100 font-bold py-2 px-4 rounded transition-colors duration-300 mt-8">
+              LOGIN
+            </button>):(<button disabled className="w-full bg-blue-900 hover:bg-gray-600 text-gray-100 font-bold py-2 px-4 rounded transition-colors duration-300 mt-8">
+              LOGGING
+            </button>)
+          }
+          
         </FieldSet>
       </form>
       <p className="text-sm text-gray-400 mt-6">
