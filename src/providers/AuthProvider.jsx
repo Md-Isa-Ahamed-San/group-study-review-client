@@ -43,8 +43,8 @@ const AuthProvider = ({ children }) => {
         `${import.meta.env.VITE_BASE_URL}/user/${email}`
       );
       console.log("Fetched userData from MongoDB: ", data);
-      setUserData(data);
-      localStorage.setItem("userData", JSON.stringify(data));
+      // setUserData(data);
+      // localStorage.setItem("userData", JSON.stringify(data)); //! this causing bug.setting user after log out
       return data;
     } catch (error) {
       console.error("Error fetching userData:", error);
