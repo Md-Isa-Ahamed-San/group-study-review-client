@@ -20,7 +20,7 @@ const[loggingIn,setLoggingIn] = useState(false)
   const onSubmit = async (data) => {
     console.log(data);
     const res = await login(data.email, data.password);
-    setLoggingIn(true)
+    // setLoggingIn(true)
     console.log("🚀 ~ onSubmit ~ user:", res);
 
     if (res.user.email) {
@@ -33,7 +33,7 @@ const[loggingIn,setLoggingIn] = useState(false)
         console.log(" onSubmit ~ userData:", userData);
         localStorage.setItem("userData", JSON.stringify(userData));
         setUserData(userData);
-        setLoggingIn(false)
+        // setLoggingIn(false)
         navigate("/");
       } catch (error) {
         console.error("Error fetching user data:", error);
