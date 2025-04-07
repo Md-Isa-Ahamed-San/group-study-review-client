@@ -95,7 +95,7 @@ const LoginForm = ({ onToggle }) => {
         </FieldSet>
       </form>
       <p className="text-sm text-gray-400 mt-6">
-        Don't have an account?{" "}
+        Don't have an account ?{" "}
         <a
           href="#"
           className="text-yellow-400 hover:text-gray-300"
