@@ -30,7 +30,7 @@ const[loggingIn,setLoggingIn] = useState(false)
         const userData = await fetchUserDataMutation.mutateAsync(
           res.user.email
         );
-        console.log(" onSubmit ~ userData:", userData)
+        console.log(" onSubmit ~ userData:", userData);
         localStorage.setItem("userData", JSON.stringify(userData));
         setUserData(userData);
         setLoggingIn(false)
@@ -82,9 +82,9 @@ const[loggingIn,setLoggingIn] = useState(false)
           </Field>
           {
             loggingIn? (<button className="w-full bg-blue-900 hover:bg-gray-600 text-gray-100 font-bold py-2 px-4 rounded transition-colors duration-300 mt-8">
-              LOGIN
-            </button>):(<button disabled className="w-full bg-blue-900 hover:bg-gray-600 text-gray-100 font-bold py-2 px-4 rounded transition-colors duration-300 mt-8">
               LOGGING
+            </button>):(<button disabled className="w-full bg-blue-900 hover:bg-gray-600 text-gray-100 font-bold py-2 px-4 rounded transition-colors duration-300 mt-8">
+              LOGIN
             </button>)
           }
           
