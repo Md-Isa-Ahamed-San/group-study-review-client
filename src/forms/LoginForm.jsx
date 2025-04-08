@@ -1,11 +1,11 @@
 /* eslint-disable react/prop-types */
 
+import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
-import FieldSet from "../components/FieldSet";
 import Field from "../components/Field";
+import FieldSet from "../components/FieldSet";
 import useAuth from "../hooks/useAuth";
-import { useState } from "react";
 
 const LoginForm = ({ onToggle }) => {
   const { login, setUserData, fetchUserDataMutation } = useAuth();
