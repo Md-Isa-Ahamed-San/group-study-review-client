@@ -6,7 +6,7 @@ export default function Hero() {
     <div className="bg-blue-700 text-white">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24 text-center">
         <h1 className="text-4xl font-extrabold sm:text-5xl md:text-6xl">
-          Welcome to EduConnect
+          Welcome to Group Study Review
         </h1>
         <p className="mt-6 text-xl max-w-3xl mx-auto text-blue-200">
           Empower your learning journey with our innovative online classroom platform. Connect, collaborate, and excel in your studies like never before.

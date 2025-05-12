@@ -45,7 +45,7 @@ export default function Header() {
           <div className="flex items-center">
             <Link to="/" className="flex items-center">
               <span className="text-2xl font-bold text-blue-400">
-                EduConnect
+              Group Study Review
               </span>
             </Link>
           </div>
