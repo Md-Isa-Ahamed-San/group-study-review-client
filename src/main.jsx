@@ -9,11 +9,12 @@ import AuthProvider from "./providers/AuthProvider.jsx";
 import ClassProvider from "./providers/ClassProvider.jsx";
 import TaskProvider from "./providers/TaskProvider.jsx";
 import { Toaster } from "react-hot-toast";
+import auth from "./firebase/firebase";
 const queryClient = new QueryClient();
 createRoot(document.getElementById("root")).render(
   <StrictMode>
     <QueryClientProvider client={queryClient}>
-      <AuthProvider>
+      <AuthProvider firebaseAuth={auth}>
         <ClassProvider>
           <TaskProvider>
             <Router>

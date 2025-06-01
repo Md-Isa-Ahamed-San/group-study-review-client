@@ -6,6 +6,7 @@ import useAuth from "../hooks/useAuth";
 import useAxios from "../hooks/useAxios";
 const ClassProvider = ({ children }) => {
   const { user } = useAuth();
+  console.trace(" ClassProvider ~ user:", user)
   const [toggleClassCreateModal, setToggleClassCreateModal] = useState(false);
   const [toggleJoinClassModal, setToggleJoinClassModal] = useState(false);
   const { api } = useAxios();
