@@ -57,10 +57,8 @@ const RegistrationForm = ({ onToggle }) => {
   };
 
   return (
-    <div className="bg-gray-100 text-gray-300 rounded-lg shadow-lg p-10 w-96 mx-auto">
-      <h2 className="text-center font-bold text-2xl mb-8 text-blue-900">
-        REGISTER
-      </h2>
+   <div className="bg-gray-100 text-gray-800 rounded-lg shadow-lg p-10 w-full md:w-96 max-w-md mx-auto my-10">
+      <h2 className="text-center font-bold text-3xl mb-8 text-blue-700">REGISTER</h2>
       <form onSubmit={handleSubmit(onSubmit)}>
         <FieldSet>
           <Field label="Username" error={errors.username}>
@@ -74,21 +72,23 @@ const RegistrationForm = ({ onToggle }) => {
               })}
               type="text"
               placeholder="Enter your username"
-              className={`w-full text-gray-300 bg-blue-900 border-b ${
-                errors.username ? "border-red-500" : "border-gray-600"
-              } py-2 px-3 mb-6 outline-none focus:border-yellow-400 transition-colors`}
+              className={`w-full text-gray-700 bg-white border ${
+                errors.username ? "border-red-500" : "border-gray-300"
+              } rounded-md py-2 px-3 mb-4 outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-colors`}
             />
           </Field>
+
           <Field label="Email" error={errors.email}>
             <input
               {...register("email", { required: "Email is required" })}
               type="email"
               placeholder="Enter your email"
-              className={`w-full text-gray-300 bg-blue-900 border-b ${
-                errors.email ? "border-red-500" : "border-gray-600"
-              } py-2 px-3 mb-6 outline-none focus:border-yellow-400 transition-colors`}
+              className={`w-full text-gray-700 bg-white border ${
+                errors.email ? "border-red-500" : "border-gray-300"
+              } rounded-md py-2 px-3 mb-4 outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-colors`}
             />
           </Field>
+
           <Field label="Password" error={errors.password}>
             <input
               {...register("password", {
@@ -100,28 +100,35 @@ const RegistrationForm = ({ onToggle }) => {
               })}
               type="password"
               placeholder="Enter your password"
-              className={`w-full text-gray-300 bg-blue-900 border-b ${
-                errors.password ? "border-red-500" : "border-gray-600"
-              } py-2 px-3 mb-6 outline-none focus:border-yellow-400 transition-colors`}
+              className={`w-full text-gray-700 bg-white border ${
+                errors.password ? "border-red-500" : "border-gray-300"
+              } rounded-md py-2 px-3 mb-4 outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-colors`}
             />
           </Field>
+
           {errorMessage && <p className="text-red-500 mb-4">{errorMessage}</p>}
-          <button className="w-full bg-blue-900 hover:bg-gray-600 text-gray-100 font-bold py-2 px-4 rounded transition-colors duration-300 mt-8">
+
+          <button
+            type="submit"
+            className="w-full font-semibold py-2.5 px-4 rounded-md transition-colors duration-300 mt-6 bg-blue-600 hover:bg-blue-700 text-white"
+          >
             SIGN UP
           </button>
         </FieldSet>
       </form>
-      <p className="text-sm text-gray-400 mt-6">
+
+      <p className="text-sm text-gray-600 mt-6 text-center">
         Already have an account?{" "}
-        <a
-          href="#"
-          className="text-yellow-400 hover:text-gray-300"
+        <button
+          type="button"
+          className="text-blue-600 hover:text-blue-800 hover:underline font-semibold"
           onClick={onToggle}
         >
           Sign in!
-        </a>
+        </button>
       </p>
     </div>
+ 
   );
 };
 

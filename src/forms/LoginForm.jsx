@@ -42,7 +42,7 @@ const LoginForm = ({ onToggle }) => {
   };
 
   return (
-    <div className="bg-gray-100 text-gray-800 rounded-lg shadow-lg p-10 w-full max-w-md mx-auto my-10">
+    <div className="bg-gray-100 text-gray-800 rounded-lg shadow-lg p-10 w-full  md:w-96 max-w-md mx-auto my-10">
       <h2 className="text-center font-bold text-3xl mb-8 text-blue-700">
         LOGIN
       </h2>
